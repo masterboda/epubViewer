@@ -17,6 +17,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Arbutus+Slab" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
     
     <!-- Css libs
     ======================================= -->
@@ -26,6 +27,7 @@
     <!-- Page stylesheets
     ======================================= -->
     
+    <link rel="stylesheet" href="css/estilos_base.css">
     <link rel="stylesheet" href="css/style.css">
     
 </head>
@@ -59,10 +61,33 @@
                 <!-- <span class="divider"> - </span> -->
                 <span class="book-author"></span>
             </div>
-            <div class="right">
-                <button class="sidebar-button hidden" onclick="ePubViewer.doSidebar()">
-                    <i class="icon material-icons-outlined">menu</i>
-                </button>
+
+            <div class="menu-tools">
+                <div class="menu-tool chapter-tool"></div>
+                <div class="menu-tool font-tool">
+                    <div class="font-settings">
+                        
+                        <div class="settings-row">
+                            <div class="settings-item" data-settings="{name: 'font-size', value: '-'}">A-</div>
+                            <div class="settings-item" data-settings="{name: 'font-size', value: '+'}">A+</div>
+                        </div>
+
+                        <div class="settings-row">
+                            <div class="settings-item" data-settings="{name: 'theme', value: []}" data-selected>Light</div>
+                            <div class="settings-item" data-settings="{name: 'theme', value: []}">Sephia</div>
+                            <div class="settings-item" data-settings="{name: 'theme', value: []}">Dark</div>
+                        </div>
+
+                        <div class="settings-row">
+                            <div class="settings-item" data-settings="{name: 'font-family', value: 'Arial'}" data-selected></div>
+                            <div class="settings-item" data-settings="{name: 'font-family', value: 'Lato'}"></div>
+                            <div class="settings-item" data-settings="{name: 'font-family', value: 'Georgia'}"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="menu-tool search-tool"></div>
+                <div class="menu-tool bookmark-tool"></div>
             </div>
         </div>
         
@@ -80,6 +105,14 @@
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <!-- Navigation buttons
+        ======================================= -->
+        
+        <div class="nav-arrows">
+            <div class="prev-btn"><button class="prev"></button></div>
+            <div class="next-btn"><button class="next"></button></div>
         </div>
 
         <!-- PROGRESS BAR

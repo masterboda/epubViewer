@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+body {
+    background: var(--tercero);
+}
+
 .app {
     display: -webkit-flex;
     display: flex;
@@ -53,6 +57,7 @@
     background: rgba(0, 0, 0, 0.1);
 }
 
+/* Progress bar */
 .app .bar {
     -webkit-flex: 0 0 auto;
     flex: 0 0 auto;
@@ -74,7 +79,10 @@
     flex: 0 0 auto;
 }
 
-.app .bar .title {
+/* End progress par */
+
+/* Menu bar */
+.app .menu-bar .title {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -82,6 +90,8 @@
     flex: 1;
     text-align: center;
 }
+
+/* End menu bar */
 
 .app .book {
     -webkit-flex: 1;
@@ -103,6 +113,7 @@
     width: 100%;
 }
 
+/* Empty book container */
 .app .book .empty-wrapper {
     display: -webkit-flex;
     display: flex;
@@ -162,6 +173,8 @@
     max-width: 400px;
     margin: 0 auto;
 }
+
+/* END empty book container */
 
 .app .dictionary-wrapper {
     display: -webkit-flex;
@@ -252,6 +265,7 @@
     font-size: 12px;
 }
 
+/* Old sidebar start */
 .app .sidebar {
     display: -webkit-flex;
     display: flex;
@@ -601,6 +615,8 @@
     user-select: none;
 }
 
+/* end old sidebar */
+
 .app .error {
     display: block;
     background: #fff;
@@ -652,7 +668,7 @@
 }
 
 @media only screen and (max-width: 450px) {
-    .app .bar .title {
+    .app .menu-bar .title {
         display: none !important;
     }
 }
