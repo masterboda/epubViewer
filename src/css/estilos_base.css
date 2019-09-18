@@ -1,0 +1,33 @@
+
+*{
+	margin: 0;
+	padding: 0;
+}
+
+:root {
+
+    --primero: #6b79f1;
+    --segundo: #242680;
+    --tercero: #EFF6FE;
+    --cuarto: #E6E6E6;
+
+    --font1:'Montserrat', sans-serif;
+
+    --light-f:300;
+    --regular-f:400;
+    --medium-f:500;
+    --semibold-f:600;
+    --bold-f:700;
+    --extra-bold-f:800;
+    --black-f:900;
+
+    --font-size: 16px;
+
+}
+
+body{
+	font-family: var(--font1);
+	font-weight: var(--regular-f);
+	font-size: var(--font-size);
+}
+

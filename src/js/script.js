@@ -1,14 +1,5 @@
 "use strict";
 
-function isRavenDisabled() {
-    try {
-        if (typeof disableRaven !== 'undefined' && disableRaven) return true;
-        if (typeof window.disableRaven !== 'undefined' && window.disableRaven) return true;
-        return false;
-    } catch (ex) {
-        return false;
-    }
-}
 
 window.onerror = function (msg, url, line, column, err) {
     if (msg.indexOf("Permission denied") > -1) return;
@@ -25,10 +16,11 @@ window.onerror = function (msg, url, line, column, err) {
         line: line,
         column: column,
     });
-    try {
-        if (!isRavenDisabled()) Raven.captureException(err);
-    } catch (err) {}
 };
+
+
+/* Call functions search, settings change, change location, prev & next buttons, open file button
+======================================= */
 
 let App = function (el) {
     this.ael = el;
@@ -95,6 +87,8 @@ let App = function (el) {
     this.applyTheme();
 };
 
+
+
 App.prototype.doBook = function (url, opts) {
     this.qs(".book").innerHTML = "Loading";
 
@@ -102,6 +96,7 @@ App.prototype.doBook = function (url, opts) {
         encoding: "epub"
     };
     console.log("doBook", url, opts);
+    console.log("HACER LIBRO");
     this.doReset();
 
     try {
@@ -164,6 +159,10 @@ App.prototype.setChipActive = function (container, value) {
     return value;
 };
 
+
+/* Setting buttons
+======================================= */
+
 App.prototype.getChipActive = function (container) {
     let el = this.qs(`.chips[data-chips='${container}']`).querySelector(".chip.active[data-value]");
     if (!el) return this.qs(`.chips[data-chips='${container}']`).querySelector(".chip[data-default]");
@@ -172,18 +171,24 @@ App.prototype.getChipActive = function (container) {
 
 App.prototype.doOpenBook = function () {
     var fi = document.createElement("input");
+
     fi.setAttribute("accept", "application/epub+zip");
     fi.style.display = "none";
     fi.type = "file";
+
+
     fi.onchange = event => {
         var reader = new FileReader();
+
+
+
         reader.addEventListener("load", () => {
             var arr = (new Uint8Array(reader.result)).subarray(0, 2);
+
             var header = "";
             for (var i = 0; i < arr.length; i++) {
                 header += arr[i].toString(16);
-            }
-            if (header == "504b") {
+            }if (header == "504b") {
                 this.doBook(reader.result, {
                     encoding: "binary"
                 });
@@ -191,12 +196,17 @@ App.prototype.doOpenBook = function () {
                 this.fatal("invalid file", "not an epub book");
             }
         }, false);
+
+        
+        console.log(fi.files[0]);
+
         if (fi.files[0]) {
             reader.readAsArrayBuffer(fi.files[0]);
         }
     };
     document.body.appendChild(fi);
     fi.click();
+    // console.log(fi)
 };
 
 App.prototype.fatal = function (msg, err, usersFault) {
@@ -209,9 +219,6 @@ App.prototype.fatal = function (msg, err, usersFault) {
         error: err.toString(),
         stack: err.stack
     });
-    try {
-        if (!isRavenDisabled()) if (!usersFault) Raven.captureException(err);
-    } catch (err) {}
 };
 
 App.prototype.doReset = function () {
@@ -223,9 +230,9 @@ App.prototype.doReset = function () {
         rendition: null
     };
     this.qs(".sidebar-wrapper").classList.add("out");
-    this.qs(".bar .book-title").innerHTML = "";
-    this.qs(".bar .book-author").innerHTML = "";
-    this.qs(".bar .loc").innerHTML = "";
+    this.qs(".menu-bar .book-title").innerHTML = "";
+    this.qs(".menu-bar .book-author").innerHTML = "";
+    this.qs(".menu-bar .loc").innerHTML = "";
     this.qs(".search-results").innerHTML = "";
     this.qs(".search-box").value = "";
     this.qs(".toc-list").innerHTML = "";
@@ -264,6 +271,8 @@ App.prototype.onBookReady = function (event) {
 
     console.log("bookKey", this.state.book.key());
 
+    this.qs(".info .cover").src = "./images/logo.png";
+
     let chars = 1650;
     let key = `${this.state.book.key()}:locations-${chars}`;
     let stored = localStorage.getItem(key);
@@ -275,13 +284,29 @@ App.prototype.onBookReady = function (event) {
         localStorage.setItem(key, this.state.book.locations.save());
         console.log("locations generated", this.state.book.locations);
     }).catch(err => console.error("error generating locations", err));
+
+    this.qs(".item").addEventListener("click", myFunction);
+
+    function myFunction() {
+        document.getElementsByClassName("item").css("display","none");
+    }
 };
 
 App.prototype.onTocItemClick = function (href, event) {
     console.log("tocClick", href);
+    // console.log(this.children.length);
+
+    $(".blackbolt").css("display","none");
+
     this.state.rendition.display(href).catch(err => console.warn("error displaying page", err));
     event.stopPropagation();
     event.preventDefault();
+
+    // document.getElementsByClassName("item").addEventListener("click", myFunction);
+
+    // function myFunction() {
+    //     document.getElementsByClassName("item").css("display","none");
+    // }
 };
 
 App.prototype.getNavItem = function(loc, ignoreHash) {
@@ -323,8 +348,8 @@ App.prototype.onRenditionRelocated = function (event) {
 
 App.prototype.onBookMetadataLoaded = function (metadata) {
     console.log("metadata", metadata);
-    this.qs(".bar .book-title").innerText = metadata.title.trim();
-    this.qs(".bar .book-author").innerText = metadata.creator.trim();
+    this.qs(".menu-bar .book-title").innerText = metadata.title.trim();
+    this.qs(".menu-bar .book-author").innerText = metadata.creator.trim();
     this.qs(".info .title").innerText = metadata.title.trim();
     this.qs(".info .author").innerText = metadata.creator.trim();
     if (!metadata.series || metadata.series.trim() == "") this.qs(".info .series-info").classList.add("hidden");
@@ -345,6 +370,10 @@ App.prototype.onBookCoverLoaded = function (url) {
         this.qs(".cover").src = url;
     }).catch(this.fatal.bind(this, "error loading cover"));
 };
+
+
+/* Prev && Next by arrows
+======================================= */
 
 App.prototype.onKeyUp = function (event) {
     let kc = event.keyCode || event.which;
@@ -413,6 +442,10 @@ App.prototype.onRenditionDisplayedTouchSwipe = function (event) {
     });
 };
 
+
+/* Change Themes
+======================================= */
+
 App.prototype.applyTheme = function () {
     let theme = {
         bg: this.getChipActive("theme").split(";")[0],
@@ -480,6 +513,11 @@ App.prototype.loadFonts = function() {
         });
     });
 };
+
+
+
+/* Progress bar
+======================================= */
 
 App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
     try {
@@ -557,6 +595,9 @@ App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
 App.prototype.onRenditionRelocatedSavePos = function (event) {
     localStorage.setItem(`${this.state.book.key()}:pos`, event.start.cfi);
 };
+
+/* Local storage position
+======================================= */
 
 App.prototype.onRenditionStartedRestorePos = function (event) {
     try {
@@ -680,6 +721,9 @@ App.prototype.doFullscreen = () => {
     }
 };
 
+/* Search
+======================================= */
+
 App.prototype.doSearch = function (q) {
     return Promise.all(this.state.book.spine.spineItems.map(item => {
         return item.load(this.state.book.load.bind(this.state.book)).then(doc => {
@@ -763,7 +807,4 @@ try {
         error: err.toString(),
         stack: err.stack
     });
-    try {
-        if (!isRavenDisabled) Raven.captureException(err);
-    } catch (err) {}
 }
