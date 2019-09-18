@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="description" content="ePubViewer is an powerful, modern, and easy-to-use web app for reading ebooks.">
+    
+    <title>Narrativas</title>
+    
+    <!-- Fonts
+    ======================================= -->
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Arbutus+Slab" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+    
+    <!-- Css libs
+    ======================================= -->
+
+    <link rel="stylesheet" href="libs/css/normalize.min.css">
+    
+    <!-- Page stylesheets
+    ======================================= -->
+    
+    <link rel="stylesheet" href="css/estilos_base.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+</head>
+
+<body>
+    <div class="app">
+
+        <!-- DICTONARY CONTAINER
+        ======================================= -->
+        
+        <div class="dictionary-wrapper hidden">
+            <div class="dictionary"></div>
+        </div>
+
+        <!-- ERROR CONTAINER
+        ======================================= -->
+        
+        <div class="error hidden">
+            <div class="error-title"></div>
+            <div class="error-description"></div>
+            <div class="error-info"></div>
+            <div class="error-dump"></div>
+        </div>
+
+        <!-- MENU-BAR
+        ======================================= -->
+        
+        <div class="menu-bar">
+            <div class="title">
+                <span class="book-title"></span>
+                <!-- <span class="divider"> - </span> -->
+                <span class="book-author"></span>
+            </div>
+
+            <div class="menu-tools">
+                <div class="menu-tool chapter-tool"></div>
+                <div class="menu-tool font-tool">
+                    <div class="font-settings">
+                        
+                        <div class="settings-row">
+                            <div class="settings-item" data-settings="{name: 'font-size', value: '-'}">A-</div>
+                            <div class="settings-item" data-settings="{name: 'font-size', value: '+'}">A+</div>
+                        </div>
+
+                        <div class="settings-row">
+                            <div class="settings-item" data-settings="{name: 'theme', value: []}" data-selected>Light</div>
+                            <div class="settings-item" data-settings="{name: 'theme', value: []}">Sephia</div>
+                            <div class="settings-item" data-settings="{name: 'theme', value: []}">Dark</div>
+                        </div>
+
+                        <div class="settings-row">
+                            <div class="settings-item" data-settings="{name: 'font-family', value: 'Arial'}" data-selected></div>
+                            <div class="settings-item" data-settings="{name: 'font-family', value: 'Lato'}"></div>
+                            <div class="settings-item" data-settings="{name: 'font-family', value: 'Georgia'}"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="menu-tool search-tool"></div>
+                <div class="menu-tool bookmark-tool"></div>
+            </div>
+        </div>
+        
+        <!-- BOOK CONTAINER
+        ======================================= -->
+        
+        <div class="book">
+            <div class="empty-wrapper">
+                <div class="empty">
+                    <div class="app-name">ePubViewer</div>
+                    <div class="message">
+                        Unknown error. If this message does not disappear in a few seconds, try using a different browser (Chrome or Firefox), and
+                        if the issue still persists,
+                        <a href="https://github.com/geek1011/ePubViewer">report it here</a>.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation buttons
+        ======================================= -->
+        
+        <div class="nav-arrows">
+            <div class="prev-btn"><button class="prev"></button></div>
+            <div class="next-btn"><button class="next"></button></div>
+        </div>
+
+        <!-- PROGRESS BAR
+        ======================================= -->
+        
+        <div class="bar">
+            <div class="loc"></div>
+        </div>
+
+    </div>
+
+    <script>
+        function isIE(userAgent) {
+            userAgent = userAgent || navigator.userAgent;
+            return userAgent.indexOf("MSIE ") > -1 || userAgent.indexOf("Trident/") > -1;
+        }
+        if (isIE()) alert("ePubViewer does not support Internet Explorer. Please use Chrome or Firefox.");
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) window.addEventListener('load', () => {
+            navigator.serviceWorker.register('js/sw.js').then(reg => {
+                reg.onupdatefound = () => {
+                    const installingWorker = reg.installing;
+                    installingWorker.onstatechange = () => {
+                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            location.reload();
+                        }
+                    };
+                };
+            })
+        });
+        try {
+            window.caches.keys().then(keys => console.log("caches: " + keys.join(", "))).catch(err => console.log("error checking cache version"));
+        } catch (err) { }
+    </script>
+
+
+    <!-- Libs & polyfills
+    ======================================= -->
+    
+    <script src="polyfills/babel-polyfill.min.js"></script>
+    <script src="polyfills/fetch.js"></script>
+    <script src="polyfills/pep.min.js"></script>
+    <script src="libs/js/sanitize-html.min.js"></script>
+    <script src="libs/js/jszip.min.js"></script>
+    <script src="libs/js/epub.js"></script>
+
+    
+    <!-- Project scripts
+    ======================================= -->
+    
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>
