@@ -146,7 +146,24 @@ body {
 
 /* End menu bar */
 
+/* Prev & Next */
 
+.nav-arrows .prev-btn,
+.nav-arrows .next-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.nav-arrows .prev-btn {
+    left: 50px;
+}
+
+.nav-arrows .next-btn {
+    right: 50px;
+}
+
+/* End Prev & Next */
 
 /* Progress bar */
 .app .bar {
@@ -165,14 +182,67 @@ body {
     padding: 0 10px;
 }
 
-.app .bar > div {
-    -webkit-flex: 0 0 auto;
-    flex: 0 0 auto;
+
+.rangebar {
+    -webkit-appearance: none;
+    -moz-apperance: none;
+    height: 4px;
+    width: 100% !important;
+    cursor: pointer;
+    
+    background-image: -webkit-gradient(linear,
+        left top, 
+        right top, 
+        color-stop(0%, #3d66ef),
+        color-stop(0%, #e6e6e6));
+    
+    background-image: -moz-linear-gradient(left center,
+        #3d66ef 0%, #3d66ef 0%,
+        #e6e6e6 0%, #e6e6e6 100%);
+}
+
+.rangebar::-moz-range-track {
+    border: none;
+    background: none;
+    outline: none;
+}
+
+.rangebar:focus {
+    outline: none;
+    border: none;
+}
+
+.rangebar::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    background-color: #3d66ef;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+}
+.rangebar::-webkit-slider-thumb:hover {
+    height: 15px;
+    width: 15px;
+}
+
+.rangebar::-moz-range-thumb {
+    -moz-appearance: none !important;
+    background-color: #3d66ef;
+    border: none;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+}
+.rangebar::-moz-range-thumb:hover {
+    height: 10px;
+    width: 10px;
 }
 
 /* End progress par */
 
 .app .book {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
     -webkit-flex: 1;
     flex: 1;
     display: -webkit-flex;

@@ -50,31 +50,31 @@ let App = function (el) {
     this.qs("button.next").addEventListener("click", () => this.state.rendition.next());
     // this.qs("button.open").addEventListener("click", () => this.doOpenBook());
 
-    try {
-        this.qs(".bar .loc").style.cursor = "pointer";
-        this.qs(".bar .loc").addEventListener("click", event => {
-            try {
-                let answer = prompt(`Location to go to (up to ${this.state.book.locations.length()})?`, this.state.rendition.currentLocation().start.location);
-                if (!answer) return;
-                answer = answer.trim();
-                if (answer == "") return;
+    // try {
+    //     this.qs(".bar .loc").style.cursor = "pointer";
+    //     this.qs(".bar .loc").addEventListener("click", event => {
+    //         try {
+    //             let answer = prompt(`Location to go to (up to ${this.state.book.locations.length()})?`, this.state.rendition.currentLocation().start.location);
+    //             if (!answer) return;
+    //             answer = answer.trim();
+    //             if (answer == "") return;
 
-                let parsed = parseInt(answer, 10);
-                if (isNaN(parsed) || parsed < 0) throw new Error("Invalid location: not a positive integer");
-                if (parsed > this.state.book.locations.length()) throw new Error("Invalid location");
+    //             let parsed = parseInt(answer, 10);
+    //             if (isNaN(parsed) || parsed < 0) throw new Error("Invalid location: not a positive integer");
+    //             if (parsed > this.state.book.locations.length()) throw new Error("Invalid location");
 
-                let cfi = this.state.book.locations.cfiFromLocation(parsed);
-                if (cfi === -1) throw new Error("Invalid location");
+    //             let cfi = this.state.book.locations.cfiFromLocation(parsed);
+    //             if (cfi === -1) throw new Error("Invalid location");
 
-                this.state.rendition.display(cfi);
-            } catch (err) {
-                alert(err.toString());
-            }
-        });
-    } catch (err) {
-        this.fatal("error attaching event handlers for location go to", err);
-        throw err;
-    }
+    //             this.state.rendition.display(cfi);
+    //         } catch (err) {
+    //             alert(err.toString());
+    //         }
+    //     });
+    // } catch (err) {
+    //     this.fatal("error attaching event handlers for location go to", err);
+    //     throw err;
+    // }
 
     // this.doTab("toc");
 
@@ -233,7 +233,7 @@ App.prototype.doReset = function () {
     // this.qs(".sidebar-wrapper").classList.add("out");
     this.qs(".menu-bar .book-title").innerHTML = "";
     this.qs(".menu-bar .book-author").innerHTML = "";
-    this.qs(".bar .loc").innerHTML = "";
+    // this.qs(".bar .loc").innerHTML = "";
     // this.qs(".search-results").innerHTML = "";
     // this.qs(".search-box").value = "";
     // this.qs(".toc-list").innerHTML = "";
@@ -527,71 +527,15 @@ App.prototype.loadFonts = function() {
 App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
     try {
         // TODO: don't recreate every time the location changes.
-        this.qs(".bar .loc").innerHTML = "";
-        
-        let bar = this.qs(".bar .loc").appendChild(document.createElement("div"));
-        bar.style.position = "relative";
-        bar.style.width = "60vw";
-        bar.style.cursor = "default";
-        bar.addEventListener("click", ev => ev.stopImmediatePropagation(), false);
-
-        let range = bar.appendChild(document.createElement("input"));
-        range.type = "range";
-        range.style.width = "100%";
+        let range = this.qs('.bar .rangebar');
+        range.classList.remove('hidden');
         range.min = 0;
         range.max = this.state.book.locations.length();
         range.value = event.start.location;
-        range.addEventListener("change", () => this.state.rendition.display(this.state.book.locations.cfiFromLocation(range.value)), false);
-
-        let markers = bar.appendChild(document.createElement("div"));
-        markers.style.position = "absolute";
-        markers.style.width = "100%";
-        markers.style.height = "50%";
-        markers.style.bottom = "0";
-        markers.style.left = "0";
-        markers.style.right = "0";
-
-        for (let i = 0, last = -1; i < this.state.book.locations.length(); i++) {
-            try {
-                let parsed = new ePub.CFI().parse(this.state.book.locations.cfiFromLocation(i));
-                if (parsed.spinePos < 0 || parsed.spinePos == last)
-                    continue;
-                last = parsed.spinePos;
-
-                let marker = markers.appendChild(document.createElement("div"));
-                marker.style.position = "absolute";
-                marker.style.left = `${this.state.book.locations.percentageFromLocation(i) * 100}%`;
-                marker.style.width = "4px";
-                marker.style.height = "30%";
-                marker.style.cursor = "pointer";
-                marker.style.opacity = "0.5";
-                marker.addEventListener("click", this.onTocItemClick.bind(this, this.state.book.locations.cfiFromLocation(i)), false);
-
-                let tick = marker.appendChild(document.createElement("div"));
-                tick.style.width = "1px";
-                tick.style.height = "100%";
-                tick.style.backgroundColor = "currentColor";
-            } catch (ex) {
-                console.warn("Error adding marker for location", i, ex);
-            }
-        }
-
-        return;
-        // не потрібно: лише progressbar
-        // let stxt = "Loading";
-        // if (this.getChipActive("progress") == "none") {
-        //     stxt = "";
-        // } else if (this.getChipActive("progress") == "location" && event.start.location > 0) {
-        //     stxt = `Loc ${event.start.location}/${this.state.book.locations.length()}`
-        // } else if (this.getChipActive("progress") == "chapter") {
-        //     let navItem = this.getNavItem(event, false) || this.getNavItem(event, true);
-        //     stxt = navItem ? navItem.label.trim() : (event.start.percentage > 0 && event.start.percentage < 1) ? `${Math.round(event.start.percentage * 100)}%` : "";
-        // } else {
-        //     stxt = (event.start.percentage > 0 && event.start.percentage < 1) ? `${Math.round(event.start.percentage * 1000)/10}%` : "";
-        // }
-        // this.qs(".bar .loc").innerHTML = stxt;
+        range.onchange = () => this.state.rendition.display(this.state.book.locations.cfiFromLocation(range.value));
+        
     } catch (err) {
-        console.error("error updating indicators");
+        console.error("error updating indicators: " + err);
     }
 };
 
