@@ -167,6 +167,9 @@ body {
 
 /* Progress bar */
 .app .bar {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
     -webkit-flex: 0 0 auto;
     flex: 0 0 auto;
     display: -webkit-flex;
