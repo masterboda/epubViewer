@@ -30,6 +30,10 @@ window.onerror = function (msg, url, line, column, err) {
     } catch (err) {}
 };
 
+
+/* Call functions search, settings change, change location, prev & next buttons, open file button
+======================================= */
+
 let App = function (el) {
     this.ael = el;
     this.state = {};
@@ -166,6 +170,10 @@ App.prototype.setChipActive = function (container, value) {
     if (this.state.rendition && this.state.rendition.location) this.onRenditionRelocatedUpdateIndicators(this.state.rendition.location);
     return value;
 };
+
+
+/* Setting buttons
+======================================= */
 
 App.prototype.getChipActive = function (container) {
     let el = this.qs(`.chips[data-chips='${container}']`).querySelector(".chip.active[data-value]");
@@ -380,6 +388,10 @@ App.prototype.onBookCoverLoaded = function (url) {
     }).catch(this.fatal.bind(this, "error loading cover"));
 };
 
+
+/* Prev && Next by arrows
+======================================= */
+
 App.prototype.onKeyUp = function (event) {
     let kc = event.keyCode || event.which;
     let b = null;
@@ -446,6 +458,10 @@ App.prototype.onRenditionDisplayedTouchSwipe = function (event) {
         if (vr < hr && vr < -0.25) return;
     });
 };
+
+
+/* Change Themes
+======================================= */
 
 App.prototype.applyTheme = function () {
     let theme = {
@@ -516,6 +532,9 @@ App.prototype.loadFonts = function() {
 };
 
 
+
+/* Progress bar
+======================================= */
 
 App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
     try {
@@ -593,6 +612,9 @@ App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
 App.prototype.onRenditionRelocatedSavePos = function (event) {
     localStorage.setItem(`${this.state.book.key()}:pos`, event.start.cfi);
 };
+
+/* Local storage position
+======================================= */
 
 App.prototype.onRenditionStartedRestorePos = function (event) {
     try {
@@ -715,6 +737,9 @@ App.prototype.doFullscreen = () => {
         requestFullscreen(document.documentElement);
     }
 };
+
+/* Search
+======================================= */
 
 App.prototype.doSearch = function (q) {
     return Promise.all(this.state.book.spine.spineItems.map(item => {
