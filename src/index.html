@@ -57,33 +57,35 @@
         
         <div class="menu-bar">
             <div class="title">
-                <span class="book-title"></span>
-                <!-- <span class="divider"> - </span> -->
-                <span class="book-author"></span>
+                <h2 class="book-title"></h2>
+                <h3 class="book-author"></h3>
             </div>
 
             <div class="menu-tools">
                 <div class="menu-tool chapter-tool"></div>
                 <div class="menu-tool font-tool">
-                    <div class="font-settings">
-                        
-                        <div class="settings-row">
-                            <div class="settings-item" data-settings="{name: 'font-size', value: '-'}">A-</div>
-                            <div class="settings-item" data-settings="{name: 'font-size', value: '+'}">A+</div>
-                        </div>
+                    
+                    <div class="menu-tooltip font-settings">
+                        <div class="tooltip-content">
 
-                        <div class="settings-row">
-                            <div class="settings-item" data-settings="{name: 'theme', value: []}" data-selected>Light</div>
-                            <div class="settings-item" data-settings="{name: 'theme', value: []}">Sephia</div>
-                            <div class="settings-item" data-settings="{name: 'theme', value: []}">Dark</div>
-                        </div>
+                          <div class="settings-row">
+                                <div class="settings-item" data-settings="{name: 'font-size', value: '-'}">A-</div>
+                                <div class="settings-item" data-settings="{name: 'font-size', value: '+'}">A+</div>
+                            </div>
+    
+                            <div class="settings-row">
+                                <div class="settings-item" data-settings="{name: 'theme', value: []}" data-selected>Light</div>
+                                <div class="settings-item" data-settings="{name: 'theme', value: []}">Sephia</div>
+                                <div class="settings-item" data-settings="{name: 'theme', value: []}">Dark</div>
+                            </div>
+    
+                            <div class="settings-row">
+                                <div class="settings-item" data-settings="{name: 'font-family', value: 'Arial'}" data-selected>Arial</div>
+                                <div class="settings-item" data-settings="{name: 'font-family', value: 'Lato'}">Lato</div>
+                                <div class="settings-item" data-settings="{name: 'font-family', value: 'Georgia'}">Georgia</div>
+                            </div>
 
-                        <div class="settings-row">
-                            <div class="settings-item" data-settings="{name: 'font-family', value: 'Arial'}" data-selected></div>
-                            <div class="settings-item" data-settings="{name: 'font-family', value: 'Lato'}"></div>
-                            <div class="settings-item" data-settings="{name: 'font-family', value: 'Georgia'}"></div>
                         </div>
-
                     </div>
                 </div>
                 <div class="menu-tool search-tool"></div>
@@ -111,8 +113,8 @@
         ======================================= -->
         
         <div class="nav-arrows">
-            <div class="prev-btn"><button class="prev"></button></div>
-            <div class="next-btn"><button class="next"></button></div>
+            <div class="prev-btn"><button class="prev">prev</button></div>
+            <div class="next-btn"><button class="next">next</button></div>
         </div>
 
         <!-- PROGRESS BAR

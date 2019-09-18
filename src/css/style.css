@@ -4,6 +4,20 @@
     box-sizing: border-box;
 }
 
+h1, h2, h3, h4, h5, h6, p {
+    padding: 0;
+    margin: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+.clearfix::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
 body {
     background: var(--tercero);
 }
@@ -26,36 +40,113 @@ body {
     font-size: 14px;
 }
 
-.app button {
-    display: inline-block;
-    font-size: inherit;
-    color: inherit;
+
+/* Menu bar */
+.app .menu-bar {
+    width: 100%;
+    min-height: 100px;
+    padding: 0 50px 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app .menu-bar .title .book-title{
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--segundo);
+    padding-bottom: 3px;
+}
+
+.app .menu-bar .title .book-author {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--primero);
+}
+
+.app .menu-bar .menu-tools {
+    display: flex;
+    flex-direction: row;
+}
+.app .menu-bar .menu-tool {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    transition: background-color .3s;
+    background-position: center;
+    background-size: 45px;
+    background-repeat: no-repeat;
+    position: relative;
     cursor: pointer;
-    background: transparent;
-    border: none;
-    border-radius: 5px;
-    outline: 0;
-    text-align: inherit;
-    margin: 0;
-    padding: 0;
-    line-height: 1;
-    font-weight: inherit;
-    text-decoration: none;
-    vertical-align: middle;
+    margin: 0 5px;
 }
 
-.app button::-moz-focus-inner {
-  border: 0;
-  padding: 0;
+.app .menu-bar .menu-tool.search-tool { background-image: url(../images/icons/search.png); }
+.app .menu-bar .menu-tool.font-tool { background-image: url(../images/icons/text-tool.png); }
+.app .menu-bar .menu-tool.chapter-tool { background-image: url(../images/icons/nav.png); }
+.app .menu-bar .menu-tool.bookmark-tool { background-image: url(../images/icons/bookmark.png); }
+.app .menu-bar .menu-tool:hover { background-color: var(--cuarto); }
+
+.app .menu-bar .menu-tooltip {
+    position: absolute;
+    z-index: 1000;
+    background: #fff;
+    min-width: 150px;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    border-radius: 10px;
 }
 
-.app button:hover {
-    background: rgba(0, 0, 0, 0.05);
+.menu-tooltip .tooltip-content {
+    position: relative;
+    border-radius: 10px;
 }
 
-.app button:active {
-    background: rgba(0, 0, 0, 0.1);
+.menu-tooltip .tooltip-content::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-bottom-color: #fff;
 }
+
+.app .menu-bar .menu-tool .font-settings {
+    width: 250px;
+}
+
+.app .menu-bar .menu-tool .font-settings .settings-row {
+    /*TODO: Make with grid or bootstrap */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 2px;
+}
+.app .menu-bar .menu-tool .font-settings .settings-item {
+    transition: background .3s, color .3s;
+    cursor: pointer;
+    padding: 5px 0;
+    margin-right: 2px;
+    flex-basis: 100%;
+}
+
+.app .menu-bar .menu-tool .font-settings .settings-item:hover, 
+.app .menu-bar .menu-tool .font-settings .settings-item[data-selected] {
+    background: var(--primero);
+    color: #fff;
+}
+
+
+/* End menu bar */
+
+
 
 /* Progress bar */
 .app .bar {
@@ -80,18 +171,6 @@ body {
 }
 
 /* End progress par */
-
-/* Menu bar */
-.app .menu-bar .title {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0px;
-    flex: 1;
-    text-align: center;
-}
-
-/* End menu bar */
 
 .app .book {
     -webkit-flex: 1;
@@ -671,8 +750,4 @@ body {
     .app .menu-bar .title {
         display: none !important;
     }
-}
-
-.app .hidden {
-    display: none !important;
 }

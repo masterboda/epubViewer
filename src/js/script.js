@@ -23,32 +23,32 @@ window.onerror = function (msg, url, line, column, err) {
 ======================================= */
 
 let App = function (el) {
-    this.ael = el;
+    this.appElm = el;
     this.state = {};
     this.doReset();
 
     document.body.addEventListener("keyup", this.onKeyUp.bind(this));
 
-    this.qsa(".tab-list .item").forEach(el => el.addEventListener("click", this.onTabClick.bind(this, el.dataset.tab)));
-    this.qs(".sidebar .search-bar .search-box").addEventListener("keydown", event => {
-        if (event.keyCode == 13) this.qs(".sidebar .search-bar .search-button").click();
-    });
-    this.qs(".sidebar .search-bar .search-button").addEventListener("click", this.onSearchClick.bind(this));
-    this.qs(".sidebar-wrapper").addEventListener("click", event => {
-        try {
-            if (event.target.classList.contains("sidebar-wrapper")) event.target.classList.add("out");
-        } catch (err) {
-            this.fatal("error hiding sidebar", err);
-        }
-    });
-    this.qsa(".chips[data-chips]").forEach(el => {
-        Array.from(el.querySelectorAll(".chip[data-value]")).forEach(cel => cel.addEventListener("click", event => {
-            this.setChipActive(el.dataset.chips, cel.dataset.value);
-        }));
-    });
+    // this.qsa(".tab-list .item").forEach(el => el.addEventListener("click", this.onTabClick.bind(this, el.dataset.tab)));
+    // this.qs(".sidebar .search-bar .search-box").addEventListener("keydown", event => {
+    //     if (event.keyCode == 13) this.qs(".sidebar .search-bar .search-button").click();
+    // });
+    // this.qs(".sidebar .search-bar .search-button").addEventListener("click", this.onSearchClick.bind(this));
+    // this.qs(".sidebar-wrapper").addEventListener("click", event => {
+    //     try {
+    //         if (event.target.classList.contains("sidebar-wrapper")) event.target.classList.add("out");
+    //     } catch (err) {
+    //         this.fatal("error hiding sidebar", err);
+    //     }
+    // });
+    // this.qsa(".chips[data-chips]").forEach(el => {
+    //     Array.from(el.querySelectorAll(".chip[data-value]")).forEach(cel => cel.addEventListener("click", event => {
+    //         this.setChipActive(el.dataset.chips, cel.dataset.value);
+    //     }));
+    // });
     this.qs("button.prev").addEventListener("click", () => this.state.rendition.prev());
     this.qs("button.next").addEventListener("click", () => this.state.rendition.next());
-    this.qs("button.open").addEventListener("click", () => this.doOpenBook());
+    // this.qs("button.open").addEventListener("click", () => this.doOpenBook());
 
     try {
         this.qs(".bar .loc").style.cursor = "pointer";
@@ -76,15 +76,15 @@ let App = function (el) {
         throw err;
     }
 
-    this.doTab("toc");
+    // this.doTab("toc");
 
-    try {
-        this.loadSettingsFromStorage();
-    } catch (err) {
-        this.fatal("error loading settings", err);
-        throw err;
-    }
-    this.applyTheme();
+    // try {
+    //     this.loadSettingsFromStorage();
+    // } catch (err) {
+    //     this.fatal("error loading settings", err);
+    //     throw err;
+    // }
+    // this.applyTheme();
 };
 
 
@@ -110,11 +110,11 @@ App.prototype.doBook = function (url, opts) {
 
     this.state.book.ready.then(this.onBookReady.bind(this)).catch(this.fatal.bind(this, "error loading book"));
 
-    this.state.book.loaded.navigation.then(this.onNavigationLoaded.bind(this)).catch(this.fatal.bind(this, "error loading toc"));
+    // this.state.book.loaded.navigation.then(this.onNavigationLoaded.bind(this)).catch(this.fatal.bind(this, "error loading toc"));
     this.state.book.loaded.metadata.then(this.onBookMetadataLoaded.bind(this)).catch(this.fatal.bind(this, "error loading metadata"));
-    this.state.book.loaded.cover.then(this.onBookCoverLoaded.bind(this)).catch(this.fatal.bind(this, "error loading cover"));
+    // this.state.book.loaded.cover.then(this.onBookCoverLoaded.bind(this)).catch(this.fatal.bind(this, "error loading cover"));
 
-    this.state.rendition.hooks.content.register(this.applyTheme.bind(this));
+    // this.state.rendition.hooks.content.register(this.applyTheme.bind(this));
     this.state.rendition.hooks.content.register(this.loadFonts.bind(this));
 
     this.state.rendition.on("relocated", this.onRenditionRelocated.bind(this));
@@ -133,10 +133,14 @@ App.prototype.doBook = function (url, opts) {
     this.doDictionary(null);
 };
 
-App.prototype.loadSettingsFromStorage = function () {
-    ["theme", "font", "font-size", "line-spacing", "margin", "progress"].forEach(container => this.restoreChipActive(container));
-};
+// App.prototype.loadSettingsFromStorage = function () {
+//     ["theme", "font", "font-size", "line-spacing", "margin", "progress"].forEach(container => this.restoreChipActive(container));
+// };
 
+/* Setting buttons
+======================================= */
+
+/*
 App.prototype.restoreChipActive = function (container) {
     let v = localStorage.getItem(`ePubViewer:${container}`);
     if (v) return this.setChipActive(container, v);
@@ -159,15 +163,12 @@ App.prototype.setChipActive = function (container, value) {
     return value;
 };
 
-
-/* Setting buttons
-======================================= */
-
 App.prototype.getChipActive = function (container) {
     let el = this.qs(`.chips[data-chips='${container}']`).querySelector(".chip.active[data-value]");
     if (!el) return this.qs(`.chips[data-chips='${container}']`).querySelector(".chip[data-default]");
     return el.dataset.value;
 };
+*/
 
 App.prototype.doOpenBook = function () {
     var fi = document.createElement("input");
@@ -229,33 +230,33 @@ App.prototype.doReset = function () {
         book: null,
         rendition: null
     };
-    this.qs(".sidebar-wrapper").classList.add("out");
+    // this.qs(".sidebar-wrapper").classList.add("out");
     this.qs(".menu-bar .book-title").innerHTML = "";
     this.qs(".menu-bar .book-author").innerHTML = "";
-    this.qs(".menu-bar .loc").innerHTML = "";
-    this.qs(".search-results").innerHTML = "";
-    this.qs(".search-box").value = "";
-    this.qs(".toc-list").innerHTML = "";
-    this.qs(".info .cover").src = "";
-    this.qs(".info .title").innerHTML = "";
-    this.qs(".info .series-info").classList.remove("hidden");
-    this.qs(".info .series-name").innerHTML = "";
-    this.qs(".info .series-index").innerHTML = "";
-    this.qs(".info .author").innerHTML = "";
-    this.qs(".info .description").innerHTML = "";
+    this.qs(".bar .loc").innerHTML = "";
+    // this.qs(".search-results").innerHTML = "";
+    // this.qs(".search-box").value = "";
+    // this.qs(".toc-list").innerHTML = "";
+    // this.qs(".info .cover").src = "";
+    // this.qs(".info .title").innerHTML = "";
+    // this.qs(".info .series-info").classList.remove("hidden");
+    // this.qs(".info .series-name").innerHTML = "";
+    // this.qs(".info .series-index").innerHTML = "";
+    // this.qs(".info .author").innerHTML = "";
+    // this.qs(".info .description").innerHTML = "";
     this.qs(".book").innerHTML = '<div class="empty-wrapper"><div class="empty"><div class="app-name">ePubViewer</div><div class="message"><a href="javascript:ePubViewer.doOpenBook();" class="big-button">Open a Book</a></div></div></div>';
-    this.qs(".sidebar-button").classList.add("hidden");
-    this.qs(".bar button.prev").classList.add("hidden");
-    this.qs(".bar button.next").classList.add("hidden");
+    // this.qs(".sidebar-button").classList.add("hidden");
+    this.qs("button.prev").classList.add("hidden");
+    this.qs("button.next").classList.add("hidden");
     this.doDictionary(null);
 };
 
 App.prototype.qs = function (q) {
-    return this.ael.querySelector(q);
+    return this.appElm.querySelector(q);
 };
 
 App.prototype.qsa = function (q) {
-    return Array.from(this.ael.querySelectorAll(q));
+    return Array.from(this.appElm.querySelectorAll(q));
 };
 
 App.prototype.el = function (t, c) {
@@ -265,13 +266,13 @@ App.prototype.el = function (t, c) {
 };
 
 App.prototype.onBookReady = function (event) {
-    this.qs(".sidebar-button").classList.remove("hidden");
-    this.qs(".bar button.prev").classList.remove("hidden");
-    this.qs(".bar button.next").classList.remove("hidden");
+    // this.qs(".sidebar-button").classList.remove("hidden");
+    this.qs("button.prev").classList.remove("hidden");
+    this.qs("button.next").classList.remove("hidden");
 
     console.log("bookKey", this.state.book.key());
 
-    this.qs(".info .cover").src = "./images/logo.png";
+    // this.qs(".info .cover").src = "./images/logo.png";
 
     let chars = 1650;
     let key = `${this.state.book.key()}:locations-${chars}`;
@@ -292,11 +293,15 @@ App.prototype.onBookReady = function (event) {
     }
 };
 
+
+/* Markers & chapters click function
+======================================= */
+
 App.prototype.onTocItemClick = function (href, event) {
     console.log("tocClick", href);
     // console.log(this.children.length);
 
-    $(".blackbolt").css("display","none");
+    // $(".blackbolt").css("display","none");
 
     this.state.rendition.display(href).catch(err => console.warn("error displaying page", err));
     event.stopPropagation();
@@ -350,13 +355,13 @@ App.prototype.onBookMetadataLoaded = function (metadata) {
     console.log("metadata", metadata);
     this.qs(".menu-bar .book-title").innerText = metadata.title.trim();
     this.qs(".menu-bar .book-author").innerText = metadata.creator.trim();
-    this.qs(".info .title").innerText = metadata.title.trim();
-    this.qs(".info .author").innerText = metadata.creator.trim();
-    if (!metadata.series || metadata.series.trim() == "") this.qs(".info .series-info").classList.add("hidden");
-    this.qs(".info .series-name").innerText = metadata.series.trim();
-    this.qs(".info .series-index").innerText = metadata.seriesIndex.trim();
-    this.qs(".info .description").innerText = metadata.description;
-    if (sanitizeHtml) this.qs(".info .description").innerHTML = sanitizeHtml(metadata.description);
+    // this.qs(".info .title").innerText = metadata.title.trim();
+    // this.qs(".info .author").innerText = metadata.creator.trim();
+    // if (!metadata.series || metadata.series.trim() == "") this.qs(".info .series-info").classList.add("hidden");
+    // this.qs(".info .series-name").innerText = metadata.series.trim();
+    // this.qs(".info .series-index").innerText = metadata.seriesIndex.trim();
+    // this.qs(".info .description").innerText = metadata.description;
+    // if (sanitizeHtml) this.qs(".info .description").innerHTML = sanitizeHtml(metadata.description);
 };
 
 App.prototype.onBookCoverLoaded = function (url) {
@@ -492,9 +497,9 @@ App.prototype.applyTheme = function () {
     };
 
     try {
-        this.ael.style.background = theme.bg;
-        this.ael.style.fontFamily = theme.ff;
-        this.ael.style.color = theme.fg;
+        this.appElm.style.background = theme.bg;
+        this.appElm.style.fontFamily = theme.ff;
+        this.appElm.style.color = theme.fg;
         if(this.state.rendition) this.state.rendition.getContents().forEach(c => c.addStylesheetRules(rules));
     } catch (err) {
         console.error("error applying theme", err);
@@ -521,72 +526,70 @@ App.prototype.loadFonts = function() {
 
 App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
     try {
-        if (this.getChipActive("progress") == "bar") {
-            // TODO: don't recreate every time the location changes.
-            this.qs(".bar .loc").innerHTML = "";
-            
-            let bar = this.qs(".bar .loc").appendChild(document.createElement("div"));
-            bar.style.position = "relative";
-            bar.style.width = "60vw";
-            bar.style.cursor = "default";
-            bar.addEventListener("click", ev => ev.stopImmediatePropagation(), false);
+        // TODO: don't recreate every time the location changes.
+        this.qs(".bar .loc").innerHTML = "";
+        
+        let bar = this.qs(".bar .loc").appendChild(document.createElement("div"));
+        bar.style.position = "relative";
+        bar.style.width = "60vw";
+        bar.style.cursor = "default";
+        bar.addEventListener("click", ev => ev.stopImmediatePropagation(), false);
 
-            let range = bar.appendChild(document.createElement("input"));
-            range.type = "range";
-            range.style.width = "100%";
-            range.min = 0;
-            range.max = this.state.book.locations.length();
-            range.value = event.start.location;
-            range.addEventListener("change", () => this.state.rendition.display(this.state.book.locations.cfiFromLocation(range.value)), false);
+        let range = bar.appendChild(document.createElement("input"));
+        range.type = "range";
+        range.style.width = "100%";
+        range.min = 0;
+        range.max = this.state.book.locations.length();
+        range.value = event.start.location;
+        range.addEventListener("change", () => this.state.rendition.display(this.state.book.locations.cfiFromLocation(range.value)), false);
 
-            let markers = bar.appendChild(document.createElement("div"));
-            markers.style.position = "absolute";
-            markers.style.width = "100%";
-            markers.style.height = "50%";
-            markers.style.bottom = "0";
-            markers.style.left = "0";
-            markers.style.right = "0";
+        let markers = bar.appendChild(document.createElement("div"));
+        markers.style.position = "absolute";
+        markers.style.width = "100%";
+        markers.style.height = "50%";
+        markers.style.bottom = "0";
+        markers.style.left = "0";
+        markers.style.right = "0";
 
-            for (let i = 0, last = -1; i < this.state.book.locations.length(); i++) {
-                try {
-                    let parsed = new ePub.CFI().parse(this.state.book.locations.cfiFromLocation(i));
-                    if (parsed.spinePos < 0 || parsed.spinePos == last)
-                        continue;
-                    last = parsed.spinePos;
+        for (let i = 0, last = -1; i < this.state.book.locations.length(); i++) {
+            try {
+                let parsed = new ePub.CFI().parse(this.state.book.locations.cfiFromLocation(i));
+                if (parsed.spinePos < 0 || parsed.spinePos == last)
+                    continue;
+                last = parsed.spinePos;
 
-                    let marker = markers.appendChild(document.createElement("div"));
-                    marker.style.position = "absolute";
-                    marker.style.left = `${this.state.book.locations.percentageFromLocation(i) * 100}%`;
-                    marker.style.width = "4px";
-                    marker.style.height = "30%";
-                    marker.style.cursor = "pointer";
-                    marker.style.opacity = "0.5";
-                    marker.addEventListener("click", this.onTocItemClick.bind(this, this.state.book.locations.cfiFromLocation(i)), false);
+                let marker = markers.appendChild(document.createElement("div"));
+                marker.style.position = "absolute";
+                marker.style.left = `${this.state.book.locations.percentageFromLocation(i) * 100}%`;
+                marker.style.width = "4px";
+                marker.style.height = "30%";
+                marker.style.cursor = "pointer";
+                marker.style.opacity = "0.5";
+                marker.addEventListener("click", this.onTocItemClick.bind(this, this.state.book.locations.cfiFromLocation(i)), false);
 
-                    let tick = marker.appendChild(document.createElement("div"));
-                    tick.style.width = "1px";
-                    tick.style.height = "100%";
-                    tick.style.backgroundColor = "currentColor";
-                } catch (ex) {
-                    console.warn("Error adding marker for location", i, ex);
-                }
+                let tick = marker.appendChild(document.createElement("div"));
+                tick.style.width = "1px";
+                tick.style.height = "100%";
+                tick.style.backgroundColor = "currentColor";
+            } catch (ex) {
+                console.warn("Error adding marker for location", i, ex);
             }
-
-            return;
         }
 
-        let stxt = "Loading";
-        if (this.getChipActive("progress") == "none") {
-            stxt = "";
-        } else if (this.getChipActive("progress") == "location" && event.start.location > 0) {
-            stxt = `Loc ${event.start.location}/${this.state.book.locations.length()}`
-        } else if (this.getChipActive("progress") == "chapter") {
-            let navItem = this.getNavItem(event, false) || this.getNavItem(event, true);
-            stxt = navItem ? navItem.label.trim() : (event.start.percentage > 0 && event.start.percentage < 1) ? `${Math.round(event.start.percentage * 100)}%` : "";
-        } else {
-            stxt = (event.start.percentage > 0 && event.start.percentage < 1) ? `${Math.round(event.start.percentage * 1000)/10}%` : "";
-        }
-        this.qs(".bar .loc").innerHTML = stxt;
+        return;
+        // не потрібно: лише progressbar
+        // let stxt = "Loading";
+        // if (this.getChipActive("progress") == "none") {
+        //     stxt = "";
+        // } else if (this.getChipActive("progress") == "location" && event.start.location > 0) {
+        //     stxt = `Loc ${event.start.location}/${this.state.book.locations.length()}`
+        // } else if (this.getChipActive("progress") == "chapter") {
+        //     let navItem = this.getNavItem(event, false) || this.getNavItem(event, true);
+        //     stxt = navItem ? navItem.label.trim() : (event.start.percentage > 0 && event.start.percentage < 1) ? `${Math.round(event.start.percentage * 100)}%` : "";
+        // } else {
+        //     stxt = (event.start.percentage > 0 && event.start.percentage < 1) ? `${Math.round(event.start.percentage * 1000)/10}%` : "";
+        // }
+        // this.qs(".bar .loc").innerHTML = stxt;
     } catch (err) {
         console.error("error updating indicators");
     }
