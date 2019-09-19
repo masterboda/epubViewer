@@ -70,7 +70,11 @@ let App = function (el) {
         Array.from(el.querySelectorAll(".settings-item[data-value]")).forEach(cel => cel.addEventListener("click", event => {
             this.setChipActive(el.dataset.type, cel.dataset.value);
         }));
-    });    
+    });
+
+    this.qs(".bookmark-tool").addEventListener("click", function() {
+        this.classList.toggle("bookmarked")
+    });
     this.qs("button.prev").addEventListener("click", () => this.state.rendition.prev());
     this.qs("button.next").addEventListener("click", () => this.state.rendition.next());
     // this.qs("button.open").addEventListener("click", () => this.doOpenBook());
@@ -458,7 +462,7 @@ App.prototype.onRenditionClick = function (event) {
     let b = null;
     if (x > wrapper.clientWidth - 20) {
         event.preventDefault();
-        this.doSidebar();
+        // this.doSidebar();
     } else if (x < third) {
         event.preventDefault();
         this.state.rendition.prev();
