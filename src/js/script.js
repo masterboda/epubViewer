@@ -65,6 +65,7 @@ let App = function (el) {
 
     // New version
     this.qsa(".settings-row[data-type]").forEach(el => {
+        console.log('qsa(".settings-row[data-type]") :');
         console.dir(el);
         Array.from(el.querySelectorAll(".settings-item[data-value]")).forEach(cel => cel.addEventListener("click", event => {
             this.setChipActive(el.dataset.type, cel.dataset.value);
@@ -183,7 +184,7 @@ App.prototype.restoreChipActive = function (container) {
 };
 
 App.prototype.setDefaultChipActive = function (container) {
-    let el = this.qs(`.chips[data-chips='${container}']`).querySelector(".chip[data-default]");
+    let el = this.qs(`.settings-row[data-type='${container}']`).querySelector(".settings-item[data-default]");
     this.setChipActive(container, el.dataset.value);
     return el.dataset.value;
 };
@@ -218,9 +219,10 @@ App.prototype.setChipActive = function (container, value) {
 };
 
 App.prototype.getChipActive = function (container) {
+    console.log("container : ");
+    console.dir(container);
     let el = this.qs(`.settings-row[data-type='${container}']`).querySelector(".settings-item.active[data-value]");
     if (!el) return this.qs(`.settings-row[data-type='${container}']`).querySelector(".settings-item[data-default]");
-    console.log();
     return el.dataset.value;
 };
 //*/
@@ -513,9 +515,12 @@ App.prototype.applyTheme = function () {
         l: "#1e83d2",
         ff: this.getChipActive("font"),
         fs: this.getChipActive("font-size"),
-        lh: this.getChipActive("line-spacing"),
-        ta: "justify",
-        m: this.getChipActive("margin")
+        // NON supperted
+        // lh: this.getChipActive("line-spacing"), 
+        ta: "justify"
+        // ,
+        // NON supperted
+        // m: this.getChipActive("margin")
     };
 
     let rules = {
