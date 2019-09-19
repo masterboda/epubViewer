@@ -29,6 +29,21 @@ let App = function (el) {
 
     document.body.addEventListener("keyup", this.onKeyUp.bind(this));
 
+    this.qsa(".menu-bar .menu-tool").forEach(el => {
+        el.onmouseover = function() {
+            let tooltip = this.querySelector(".menu-tooltip");
+            if(tooltip) {
+                tooltip.classList.add("tooltip-active");
+                this.onmouseleave = () => tooltip.classList.remove("tooltip-active");
+            }
+            return;
+        }
+    });
+
+    
+    
+    
+
     // this.qsa(".tab-list .item").forEach(el => el.addEventListener("click", this.onTabClick.bind(this, el.dataset.tab)));
     // this.qs(".sidebar .search-bar .search-box").addEventListener("keydown", event => {
     //     if (event.keyCode == 13) this.qs(".sidebar .search-bar .search-button").click();
@@ -139,6 +154,16 @@ App.prototype.doBook = function (url, opts) {
 
 /* Setting buttons
 ======================================= */
+
+//try to create new function
+// App.prototype.setItemActive = function(name, value) {
+//     this.qsa(".menu-tool .settings-row").forEach(row => {
+//         Array.from(row.querySelectorAll(".settings-item")).forEach(item => {
+//             let itemData = JSON.parse(item.dataSettings);
+//             itemData.name == name &&  ? item.addAttribute('data-selected') : item.removeAttribute('data-selected');
+//         });
+//     });
+// }
 
 /*
 App.prototype.restoreChipActive = function (container) {
