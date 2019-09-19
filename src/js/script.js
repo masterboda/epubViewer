@@ -44,18 +44,18 @@ let App = function (el) {
     
     
     // Old vesion:
-    this.qsa(".tab-list .item").forEach(el => el.addEventListener("click", this.onTabClick.bind(this, el.dataset.tab)));
+    // this.qsa(".tab-list .item").forEach(el => el.addEventListener("click", this.onTabClick.bind(this, el.dataset.tab)));
     // this.qs(".menu-bar .search-bar .search-box").addEventListener("keydown", event => {
     //     if (event.keyCode == 13) this.qs(".sidebar .search-bar .search-button").click();
     // });
     // this.qs(".sidebar .search-bar .search-button").addEventListener("click", this.onSearchClick.bind(this));
-    this.qs(".sidebar-wrapper").addEventListener("click", event => {
-        try {
-            if (event.target.classList.contains("sidebar-wrapper")) event.target.classList.add("out");
-        } catch (err) {
-            this.fatal("error hiding sidebar", err);
-        }
-    });
+    // this.qs(".sidebar-wrapper").addEventListener("click", event => {
+    //     try {
+    //         if (event.target.classList.contains("sidebar-wrapper")) event.target.classList.add("out");
+    //     } catch (err) {
+    //         this.fatal("error hiding sidebar", err);
+    //     }
+    // });
     // Old version
     // this.qsa(".chips[data-chips]").forEach(el => {
     //     Array.from(el.querySelectorAll(".chip[data-value]")).forEach(cel => cel.addEventListener("click", event => {
