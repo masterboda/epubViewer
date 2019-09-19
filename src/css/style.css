@@ -51,6 +51,19 @@ body {
     align-items: center;
 }
 
+.app .menu-bar .title {
+    display: flex;
+    font-display: row;
+    align-items: center;
+}
+
+.app .menu-bar .title .logo {
+    width: 50px;
+    height: 50px;
+    background: var(--primero);
+    margin-right: 15px;
+    border-radius: 50%;
+}
 .app .menu-bar .title .book-title{
     font-size: 18px;
     font-weight: 600;
