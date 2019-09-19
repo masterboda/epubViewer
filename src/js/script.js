@@ -69,7 +69,6 @@ let App = function (el) {
         console.dir(el);
         Array.from(el.querySelectorAll(".settings-item[data-value]")).forEach(cel => cel.addEventListener("click", event => {
             this.setChipActive(el.dataset.type, cel.dataset.value);
-            // console.dir(el,cel);
         }));
     });    
     this.qs("button.prev").addEventListener("click", () => this.state.rendition.prev());
@@ -110,7 +109,7 @@ let App = function (el) {
     //     this.fatal("error loading settings", err);
     //     throw err;
     // }
-    // this.applyTheme();
+    this.applyTheme();
 };
 
 
@@ -140,7 +139,7 @@ App.prototype.doBook = function (url, opts) {
     this.state.book.loaded.metadata.then(this.onBookMetadataLoaded.bind(this)).catch(this.fatal.bind(this, "error loading metadata"));
     // this.state.book.loaded.cover.then(this.onBookCoverLoaded.bind(this)).catch(this.fatal.bind(this, "error loading cover"));
 
-    // this.state.rendition.hooks.content.register(this.applyTheme.bind(this));
+    this.state.rendition.hooks.content.register(this.applyTheme.bind(this));
     this.state.rendition.hooks.content.register(this.loadFonts.bind(this));
 
     this.state.rendition.on("relocated", this.onRenditionRelocated.bind(this));
@@ -166,20 +165,11 @@ App.prototype.doBook = function (url, opts) {
 /* Setting buttons
 ======================================= */
 
-//try to create new function
-// App.prototype.setItemActive = function(name, value) {
-//     this.qsa(".menu-tool .settings-row").forEach(row => {
-//         Array.from(row.querySelectorAll(".settings-item")).forEach(item => {
-//             let itemData = JSON.parse(item.dataSettings);
-//             itemData.name == name &&  ? item.addAttribute('data-selected') : item.removeAttribute('data-selected');
-//         });
-//     });
-// }
-
 //*
 App.prototype.restoreChipActive = function (container) {
     let v = localStorage.getItem(`ePubViewer:${container}`);
-    if (v) return this.setChipActive(container, v);
+    if (v)
+        return this.setChipActive(container, v);
     this.setDefaultChipActive(container);
 };
 
@@ -214,7 +204,8 @@ App.prototype.setChipActive = function (container, value) {
     });
     localStorage.setItem(`ePubViewer:${container}`, value);
     this.applyTheme();
-    if (this.state.rendition && this.state.rendition.location) this.onRenditionRelocatedUpdateIndicators(this.state.rendition.location);
+    if (this.state.rendition && this.state.rendition.location)
+        this.onRenditionRelocatedUpdateIndicators(this.state.rendition.location);
     return value;
 };
 
@@ -558,8 +549,9 @@ App.prototype.applyTheme = function () {
 
     try {
         this.appElm.style.background = theme.bg;
-        this.appElm.style.fontFamily = theme.ff;
-        this.appElm.style.color = theme.fg;
+        this.qs(".viewer").style.background = theme.bg;
+        // this.appElm.style.fontFamily = theme.ff;
+        // this.appElm.style.color = theme.fg;
         if(this.state.rendition) this.state.rendition.getContents().forEach(c => c.addStylesheetRules(rules));
     } catch (err) {
         console.error("error applying theme", err);
