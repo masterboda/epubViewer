@@ -33,7 +33,27 @@
 </head>
 
 <body>
+
     <div class="app">
+            <!-- BAR OlD
+            ======================================= -->
+        <div class="bar">
+            <div class="left">
+                <button class="open">
+                    <i class="icon material-icons-outlined">open_in_browser</i>
+                </button>
+            </div>
+            <div class="title">
+                <span class="book-title"></span>
+                <span class="divider"> - </span>
+                <span class="book-author"></span>
+            </div>
+            <div class="right">
+                <button class="sidebar-button" onclick="ePubViewer.doSidebar()">
+                    <i class="icon material-icons-outlined">menu</i>
+                </button>
+            </div>
+        </div>
 
         <!-- DICTONARY CONTAINER
         ======================================= -->
@@ -42,7 +62,7 @@
             <div class="dictionary"></div>
         </div>
         
-        <!-- SIDEBAR-WRAPPER
+        <!-- SIDEBAR-WRAPPER OLD
         ======================================= -->
         <div class="sidebar-wrapper out">
             <div class="sidebar">
@@ -221,21 +241,21 @@
                     <div class="menu-tooltip font-settings">
                         <div class="tooltip-content">
 
-                          <div class="settings-row">
-                                <div class="settings-item" data-settings="{name: 'font-size', value: '-'}">A-</div>
-                                <div class="settings-item" data-settings="{name: 'font-size', value: '+'}">A+</div>
+                          <div class="settings-row" data-type="font-size">
+                                <div class="settings-item active" data-value="8" data-default="true">Aa-</div>
+                                <div class="settings-item" data-value="18">Aa+</div>
                             </div>
     
-                            <div class="settings-row">
-                                <div class="settings-item" data-settings="{name: 'theme', value: []}" data-selected>Light</div>
-                                <div class="settings-item" data-settings="{name: 'theme', value: []}">Sephia</div>
-                                <div class="settings-item" data-settings="{name: 'theme', value: []}">Dark</div>
+                            <div class="settings-row" data-type="theme">
+                                <div class="settings-item active" data-value="#f5deb3;#000" data-default="true">Light</div>
+                                <div class="settings-item" data-value="#f5deb3;#000">Sephia</div>
+                                <div class="settings-item" data-value="#f5deb3;#000">Dark</div>
                             </div>
     
-                            <div class="settings-row">
-                                <div class="settings-item" data-settings="{name: 'font-family', value: 'Arial'}" data-selected>Arial</div>
-                                <div class="settings-item" data-settings="{name: 'font-family', value: 'Lato'}">Lato</div>
-                                <div class="settings-item" data-settings="{name: 'font-family', value: 'Georgia'}">Georgia</div>
+                            <div class="settings-row"  data-type="font">
+                                <div class="settings-item active" data-value="'Arial', Arimo, Liberation Sans, sans-serif" data-default="true">Arial</div>
+                                <div class="settings-item" data-value="'Lato', sans-serif">Lato</div>
+                                <div class="settings-item" data-value="'Georgia', Liberation Serif, serif">Georgia</div>
                             </div>
 
                         </div>
@@ -247,6 +267,7 @@
         </div>
         
         <div class="viewer">
+
 
             <!-- BOOK CONTAINER
             ======================================= -->

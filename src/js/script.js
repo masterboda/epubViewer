@@ -43,24 +43,34 @@ let App = function (el) {
     
     
     
-
-    // this.qsa(".tab-list .item").forEach(el => el.addEventListener("click", this.onTabClick.bind(this, el.dataset.tab)));
-    // this.qs(".sidebar .search-bar .search-box").addEventListener("keydown", event => {
+    // Old vesion:
+    this.qsa(".tab-list .item").forEach(el => el.addEventListener("click", this.onTabClick.bind(this, el.dataset.tab)));
+    // this.qs(".menu-bar .search-bar .search-box").addEventListener("keydown", event => {
     //     if (event.keyCode == 13) this.qs(".sidebar .search-bar .search-button").click();
     // });
     // this.qs(".sidebar .search-bar .search-button").addEventListener("click", this.onSearchClick.bind(this));
-    // this.qs(".sidebar-wrapper").addEventListener("click", event => {
-    //     try {
-    //         if (event.target.classList.contains("sidebar-wrapper")) event.target.classList.add("out");
-    //     } catch (err) {
-    //         this.fatal("error hiding sidebar", err);
-    //     }
-    // });
+    this.qs(".sidebar-wrapper").addEventListener("click", event => {
+        try {
+            if (event.target.classList.contains("sidebar-wrapper")) event.target.classList.add("out");
+        } catch (err) {
+            this.fatal("error hiding sidebar", err);
+        }
+    });
+    // Old version
     // this.qsa(".chips[data-chips]").forEach(el => {
     //     Array.from(el.querySelectorAll(".chip[data-value]")).forEach(cel => cel.addEventListener("click", event => {
     //         this.setChipActive(el.dataset.chips, cel.dataset.value);
     //     }));
     // });
+
+    // New version
+    this.qsa(".settings-row[data-type]").forEach(el => {
+        console.dir(el);
+        Array.from(el.querySelectorAll(".settings-item[data-value]")).forEach(cel => cel.addEventListener("click", event => {
+            this.setChipActive(el.dataset.type, cel.dataset.value);
+            // console.dir(el,cel);
+        }));
+    });    
     this.qs("button.prev").addEventListener("click", () => this.state.rendition.prev());
     this.qs("button.next").addEventListener("click", () => this.state.rendition.next());
     // this.qs("button.open").addEventListener("click", () => this.doOpenBook());
@@ -165,7 +175,7 @@ App.prototype.doBook = function (url, opts) {
 //     });
 // }
 
-/*
+//*
 App.prototype.restoreChipActive = function (container) {
     let v = localStorage.getItem(`ePubViewer:${container}`);
     if (v) return this.setChipActive(container, v);
@@ -178,8 +188,27 @@ App.prototype.setDefaultChipActive = function (container) {
     return el.dataset.value;
 };
 
+// Old version 
+// App.prototype.setChipActive = function (container, value) {
+//     Array.from(this.qs(`.chips[data-chips='${container}']`).querySelectorAll(".chip[data-value]")).forEach(el => {
+//         el.classList[el.dataset.value == value ? "add" : "remove"]("active");
+//     });
+//     localStorage.setItem(`ePubViewer:${container}`, value);
+//     this.applyTheme();
+//     if (this.state.rendition && this.state.rendition.location) this.onRenditionRelocatedUpdateIndicators(this.state.rendition.location);
+//     return value;
+// };
+
+// App.prototype.getChipActive = function (container) {
+//     let el = this.qs(`.chips[data-chips='${container}']`).querySelector(".chip.active[data-value]");
+//     if (!el) return this.qs(`.chips[data-chips='${container}']`).querySelector(".chip[data-default]");
+//     return el.dataset.value;
+// };
+
+
+// New version 
 App.prototype.setChipActive = function (container, value) {
-    Array.from(this.qs(`.chips[data-chips='${container}']`).querySelectorAll(".chip[data-value]")).forEach(el => {
+    Array.from(this.qs(`.settings-row[data-type='${container}']`).querySelectorAll(".settings-item[data-value]")).forEach(el => {
         el.classList[el.dataset.value == value ? "add" : "remove"]("active");
     });
     localStorage.setItem(`ePubViewer:${container}`, value);
@@ -189,11 +218,12 @@ App.prototype.setChipActive = function (container, value) {
 };
 
 App.prototype.getChipActive = function (container) {
-    let el = this.qs(`.chips[data-chips='${container}']`).querySelector(".chip.active[data-value]");
-    if (!el) return this.qs(`.chips[data-chips='${container}']`).querySelector(".chip[data-default]");
+    let el = this.qs(`.settings-row[data-type='${container}']`).querySelector(".settings-item.active[data-value]");
+    if (!el) return this.qs(`.settings-row[data-type='${container}']`).querySelector(".settings-item[data-default]");
+    console.log();
     return el.dataset.value;
 };
-*/
+//*/
 
 App.prototype.doOpenBook = function () {
     var fi = document.createElement("input");

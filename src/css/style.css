@@ -156,7 +156,7 @@ body {
 }
 
 .app .menu-bar .menu-tool .font-settings .settings-item:hover, 
-.app .menu-bar .menu-tool .font-settings .settings-item[data-selected] {
+.app .menu-bar .menu-tool .font-settings .settings-item.active {
     background: var(--primero);
     color: #fff;
 }
