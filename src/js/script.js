@@ -238,8 +238,8 @@ App.prototype.changeFS = function(mode) {
     }
     currFZ = sizes[sizes.indexOf(currFZ) + mode];
     fontEl.dataset.fontSize = currFZ;
-    localStorage.setItem(`ePubViewer:${container}`, value);
-    this.applyTheme();
+    // localStorage.setItem(`ePubViewer:${container}`, value);
+    // this.applyTheme();
 }
 //*/
 
