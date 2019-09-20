@@ -792,7 +792,7 @@ try {
     let ufn = location.search.replace("?", "") || location.hash.replace("#", "");
     if (ufn.startsWith("!")) {
         ufn = ufn.replace("!", "");
-        document.querySelector(".app button.open").style = "display: none !important";
+        // document.querySelector(".app button.open").style = "display: none !important";
     }
     if (ufn) {
         fetch(ufn).then(resp => {
