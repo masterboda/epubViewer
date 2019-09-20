@@ -528,7 +528,7 @@ App.prototype.applyTheme = function () {
         fg: this.getChipActive("theme").split(";")[1],
         l: "#1e83d2",
         ff: this.getChipActive("font"),
-        fs: this.qs("[data-font-size]").dataset.fontSize,
+        fs: this.qs("[data-font-size]").dataset.fontSize + 'pt',
         // NON supperted
         // lh: this.getChipActive("line-spacing"), 
         ta: "justify"
