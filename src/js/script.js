@@ -226,20 +226,20 @@ App.prototype.changeFS = function(mode) {
         sizes = [4,8,9,10,12,14,16,18,30],
         currFZ = +fontEl.dataset.fontSize,
         btns = this.qsa("[data-font-size] .settings-item");
+        btns[0].classList.remove('disabled');
+        btns[1].classList.remove('disabled');
     if (mode == -1 && currFZ == 8) {
         btns[0].classList.add('disabled');
-        btns[1].classList.remove('disabled');
         return;
     }
     else if ( mode == 1 && currFZ == 18) {
-        btns[0].classList.remove('disabled');
         btns[1].classList.add('disabled');
         return;
     }
     currFZ = sizes[sizes.indexOf(currFZ) + mode];
     fontEl.dataset.fontSize = currFZ;
-    // localStorage.setItem(`ePubViewer:${container}`, value);
-    // this.applyTheme();
+    // localStorage.setItem(`ePubViewer:font-size`, currFZ);
+    this.applyTheme();
 }
 //*/
 
@@ -528,7 +528,7 @@ App.prototype.applyTheme = function () {
         fg: this.getChipActive("theme").split(";")[1],
         l: "#1e83d2",
         ff: this.getChipActive("font"),
-        // fs: this.getChipActive("font-size"),
+        fs: this.qs("[data-font-size]").dataset.fontSize,
         // NON supperted
         // lh: this.getChipActive("line-spacing"), 
         ta: "justify"
