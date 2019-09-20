@@ -220,6 +220,27 @@ App.prototype.getChipActive = function (container) {
     if (!el) return this.qs(`.settings-row[data-type='${container}']`).querySelector(".settings-item[data-default]");
     return el.dataset.value;
 };
+
+App.prototype.changeFS = function(mode) {
+    let fontEl = this.qs("[data-font-size]"),
+        sizes = [4,8,9,10,12,14,16,18,30],
+        currFZ = +fontEl.dataset.fontSize,
+        btns = this.qsa("[data-font-size] .settings-item");
+    if (mode == -1 && currFZ == 8) {
+        btns[0].classList.add('disabled');
+        btns[1].classList.remove('disabled');
+        return;
+    }
+    else if ( mode == 1 && currFZ == 18) {
+        btns[0].classList.remove('disabled');
+        btns[1].classList.add('disabled');
+        return;
+    }
+    currFZ = sizes[sizes.indexOf(currFZ) + mode];
+    fontEl.dataset.fontSize = currFZ;
+    localStorage.setItem(`ePubViewer:${container}`, value);
+    this.applyTheme();
+}
 //*/
 
 App.prototype.doOpenBook = function () {
@@ -232,8 +253,6 @@ App.prototype.doOpenBook = function () {
 
     fi.onchange = event => {
         var reader = new FileReader();
-
-
 
         reader.addEventListener("load", () => {
             var arr = (new Uint8Array(reader.result)).subarray(0, 2);
@@ -509,7 +528,7 @@ App.prototype.applyTheme = function () {
         fg: this.getChipActive("theme").split(";")[1],
         l: "#1e83d2",
         ff: this.getChipActive("font"),
-        fs: this.getChipActive("font-size"),
+        // fs: this.getChipActive("font-size"),
         // NON supperted
         // lh: this.getChipActive("line-spacing"), 
         ta: "justify"
@@ -792,7 +811,7 @@ try {
     let ufn = location.search.replace("?", "") || location.hash.replace("#", "");
     if (ufn.startsWith("!")) {
         ufn = ufn.replace("!", "");
-        document.querySelector(".app button.open").style = "display: none !important";
+        // document.querySelector(".app button.open").style = "display: none !important";
     }
     if (ufn) {
         fetch(ufn).then(resp => {
