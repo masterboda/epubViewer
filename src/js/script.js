@@ -430,7 +430,7 @@ App.prototype.onRenditionRelocated = function (event) {
 
 App.prototype.onBookMetadataLoaded = function (metadata) {
     console.log("metadata", metadata);
-    this.qs(".menu-bar .book-title").innerText = metadata.title.trim();
+    this.qs(".menu-bar .book-title").innerText = this.qs(".tabs-wrapper .book-name").innerText = metadata.title.trim();
     this.qs(".menu-bar .book-author").innerText = metadata.creator.trim();
     // this.qs(".info .title").innerText = metadata.title.trim();
     // this.qs(".info .author").innerText = metadata.creator.trim();

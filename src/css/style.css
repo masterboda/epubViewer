@@ -9,6 +9,14 @@ h1, h2, h3, h4, h5, h6, p {
     margin: 0;
 }
 
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--segundo);
+    border-radius: 4px;
+}
+
 input:active,
 button:active,
 :invalid,
@@ -72,6 +80,11 @@ body {
     margin: 100px auto;
 }
 
+.app .tabs-wrapper .book-name{
+    text-align: center;
+    color: var(--segundo);
+}
+
 .tabs-content .tab-list {
     padding: 25px 0 20px 0;
     border-bottom: 1px solid #aaa;
@@ -84,8 +97,8 @@ body {
     padding: 5px 10px;
     text-align: center;
     min-width: 110px;
-    color: var(--primero);
-    border: 1px solid var(--primero);
+    color: var(--segundo);
+    border: 1px solid var(--segundo);
     margin: -1px 0 0 -1px;
     border-collapse: collapse;
     cursor: pointer;
@@ -94,7 +107,7 @@ body {
 
 /* .tabs-content .tab-list .tab-item:hover, */
 .tabs-content .tab-list .tab-item.active { 
-    background: var(--primero);
+    background: var(--segundo);
     color: #fff;
 }
 
@@ -216,7 +229,7 @@ body {
     color: #fff;
     font-size: 20px;
     cursor: pointer;
-    background: var(--primero);
+    background: var(--segundo);
     margin-right: 15px;
     border-radius: 50%;
 }
