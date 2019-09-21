@@ -726,3 +726,7 @@ body {
         display: none;
     }
 }
+
+.brand{
+    max-height: 7vh;  
+}
