@@ -430,7 +430,7 @@ App.prototype.onRenditionRelocated = function (event) {
 
 App.prototype.onBookMetadataLoaded = function (metadata) {
     console.log("metadata", metadata);
-    this.qs(".menu-bar .book-title").innerText = metadata.title.trim();
+    this.qs(".menu-bar .book-title").innerText = this.qs(".tabs-wrapper .book-name").innerText = metadata.title.trim();
     this.qs(".menu-bar .book-author").innerText = metadata.creator.trim();
     // this.qs(".info .title").innerText = metadata.title.trim();
     // this.qs(".info .author").innerText = metadata.creator.trim();
@@ -529,34 +529,31 @@ App.prototype.onRenditionDisplayedTouchSwipe = function (event) {
 ======================================= */
 
 App.prototype.applyTheme = function () {
+    let viewerElm = this.qs(".app .viewer");
+
     let theme = {
-        bg: this.getChipActive("theme").split(";")[0],
-        fg: this.getChipActive("theme").split(";")[1],
-        l: "#1e83d2",
-        ff: this.getChipActive("font"),
-        fs: this.qs("[data-font-size]").dataset.fontSize + 'pt',
-        // NON supperted
-        // lh: this.getChipActive("line-spacing"), 
-        ta: "justify"
-        // ,
-        // NON supperted
-        // m: this.getChipActive("margin")
+        linkColor: "#1e83d2",
+        textAlign: "justify",
+        fontFamily: this.getChipActive("font"),
+        fontSize: this.qs("[data-font-size]").dataset.fontSize + 'pt',
+        // lineHeight: 1
     };
+
+    [theme.bodyBg, theme.viewerBg, theme.viewerShadowColor, theme.fontColor] = this.getChipActive("theme").split(";");
 
     let rules = {
         "body": {
-            "background": theme.bg,
-            "color": theme.fg,
-            "font-family": theme.ff != "" ? `${theme.ff} !important` : "!invalid-hack",
-            "font-size": theme.fs != "" ? `${theme.fs} !important` : "!invalid-hack",
-            "line-height": `${theme.lh} !important`,
-            "text-align": `${theme.ta} !important`,
-            "padding-top": theme.m,
-            "padding-bottom": theme.m
+            "background": theme.viewerBg,
+            "color": theme.fontColor,
+            "font-family": theme.fontFamily != "" ? `${theme.fontFamily} !important` : "!invalid-hack",
+            "font-size": theme.fontSize != "" ? `${theme.fontSize} !important` : "!invalid-hack",
+            "line-height": `${theme.lineHeight} !important`,
+            "text-align": `${theme.textAlign} !important`,
+            "padding": `${theme.margin} 0`,
         },
         "p": {
-            "font-family": theme.ff != "" ? `${theme.ff} !important` : "!invalid-hack",
-            "font-size": theme.fs != "" ? `${theme.fs} !important` : "!invalid-hack",
+            "font-family": theme.fontFamily != "" ? `${theme.fontFamily} !important` : "!invalid-hack",
+            "font-size": theme.fontSize != "" ? `${theme.fontSize} !important` : "!invalid-hack",
         },
         "a": {
             "color": "inherit !important",
@@ -564,9 +561,9 @@ App.prototype.applyTheme = function () {
             "-webkit-text-fill-color": "inherit !important"
         },
         "a:link": {
-            "color": `${theme.l} !important`,
+            "color": `${theme.linkColor} !important`,
             "text-decoration": "none !important",
-            "-webkit-text-fill-color": `${theme.l} !important`
+            "-webkit-text-fill-color": `${theme.linkColor} !important`
         },
         "a:link:hover": {
             "background": "rgba(0, 0, 0, 0.1) !important"
@@ -577,10 +574,11 @@ App.prototype.applyTheme = function () {
     };
 
     try {
-        this.appElm.style.background = theme.bg;
-        this.qs(".viewer").style.background = theme.bg;
-        // this.appElm.style.fontFamily = theme.ff;
-        // this.appElm.style.color = theme.fg;
+        this.appElm.style.background = theme.bodyBg;
+        viewerElm.style.background = theme.viewerBg;
+        viewerElm.style.boxShadow = `0 0 10px ${theme.viewerShadowColor}`;
+        // this.appElm.style.fontFamily = theme.fontFamily;
+        // this.appElm.style.color = theme.fontColor;
         if(this.state.rendition) this.state.rendition.getContents().forEach(c => c.addStylesheetRules(rules));
     } catch (err) {
         console.error("error applying theme", err);
@@ -604,6 +602,18 @@ App.prototype.loadFonts = function() {
 
 /* Progress bar
 ======================================= */
+    App.prototype.updateRangeBar = function (r) {
+        let x = r.value / r.max;
+        r.style.backgroundImage = [
+            '-webkit-gradient(',
+              'linear, ',
+              'left top, ',
+              'right top, ',
+              'color-stop(' + x + ', #3d66ef), ',
+              'color-stop(' + x + ', #e6e6e6)',
+            ')' 
+        ].join('');
+    }
 
 App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
     try {
@@ -613,7 +623,11 @@ App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
         range.min = 0;
         range.max = this.state.book.locations.length();
         range.value = event.start.location;
-        range.onchange = () => this.state.rendition.display(this.state.book.locations.cfiFromLocation(range.value));
+        this.updateRangeBar(range);
+        range.oninput = () => {
+            this.updateRangeBar(range);
+            this.state.rendition.display(this.state.book.locations.cfiFromLocation(range.value));
+        }
         
     } catch (err) {
         console.error("error updating indicators: " + err);

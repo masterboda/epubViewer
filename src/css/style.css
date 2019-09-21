@@ -9,6 +9,14 @@ h1, h2, h3, h4, h5, h6, p {
     margin: 0;
 }
 
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--segundo);
+    border-radius: 4px;
+}
+
 input:active,
 button:active,
 :invalid,
@@ -72,6 +80,11 @@ body {
     margin: 100px auto;
 }
 
+.app .tabs-wrapper .book-name{
+    text-align: center;
+    color: var(--segundo);
+}
+
 .tabs-content .tab-list {
     padding: 25px 0 20px 0;
     border-bottom: 1px solid #aaa;
@@ -83,9 +96,10 @@ body {
 .tabs-content .tab-list .tab-item{
     padding: 5px 10px;
     text-align: center;
-    min-width: 110px;
-    color: var(--primero);
-    border: 1px solid var(--primero);
+    flex-basis: 100%;
+    max-width: 120px;
+    color: var(--segundo);
+    border: 1px solid var(--segundo);
     margin: -1px 0 0 -1px;
     border-collapse: collapse;
     cursor: pointer;
@@ -94,7 +108,7 @@ body {
 
 /* .tabs-content .tab-list .tab-item:hover, */
 .tabs-content .tab-list .tab-item.active { 
-    background: var(--primero);
+    background: var(--segundo);
     color: #fff;
 }
 
@@ -210,15 +224,15 @@ body {
 .app .menu-bar .title .logo {
     width: 50px;
     height: 50px;
+    display: block;
     flex-shrink: 0;
-    text-align: center;
-    line-height: 50px;
-    color: #fff;
-    font-size: 20px;
     cursor: pointer;
-    background: var(--primero);
+    background: var(--segundo);
     margin-right: 15px;
     border-radius: 50%;
+}
+.app .menu-bar .title .logo img{
+    width: 100%;
 }
 .app .menu-bar .title .book-title{
     font-size: 18px;
@@ -381,17 +395,14 @@ body {
     -moz-apperance: none;
     height: 4px;
     width: 100% !important;
-    cursor: pointer;
-    
-    background-image: -webkit-gradient(linear,
-        left top, 
-        right top, 
-        color-stop(0%, #3d66ef),
-        color-stop(0%, #e6e6e6));
-    
-    background-image: -moz-linear-gradient(left center,
-        #3d66ef 0%, #3d66ef 0%,
-        #e6e6e6 0%, #e6e6e6 100%);
+    cursor: pointer;    
+    background-image: -webkit-gradient(
+        linear,
+        left top,
+        right top,
+        color-stop(0, #3d66ef),
+        color-stop(0, #e6e6e6)
+    );
 }
 
 .rangebar::-moz-range-track {
@@ -660,6 +671,21 @@ body {
     font-size: 12px;
 }
 
+.app .footer {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: 40px;
+}
+.app .footer span {
+    font-size: 13px;
+    margin-right: 15px;
+}
+.app .footer img {
+    height: 100%;
+}
+
 @media only screen and (max-width: 950px) {
     .app .bar {
         height: 36px;
@@ -669,6 +695,9 @@ body {
 }
 
 @media only screen and (max-width: 620px) {
+    ::-webkit-scrollbar {
+        display: none;
+    }
     .app .menu-bar .title {
         display: none !important;
     }
@@ -676,6 +705,11 @@ body {
         justify-content: center;
         padding: 0 20px;
     }
+
+    .tabs-wrapper .search-bar, .tabs-wrapper .search-item {
+        width: 100%;
+    }
+
     .app .viewer {
         width: 100%;
     }
@@ -684,11 +718,15 @@ body {
     }
     .nav-arrows .next-btn {
         right: -20px;
-    } 
+    }
 }
 
 @media only screen and (max-width: 450px) {
     .app .nav-arrows {
         display: none;
     }
+}
+
+.brand{
+    max-height: 7vh;  
 }
