@@ -813,8 +813,9 @@ App.prototype.onSearchClick = function (event) {
 };
 
 //temporary!!!
-App.prototype.doModal = function () {
+App.prototype.doModal = function (activeTab) {
     this.qs(".modal").classList.toggle('hidden');
+    this.doTab(activeTab);
 };
 
 let ePubViewer = null;
