@@ -65,28 +65,48 @@
         <!-- TOOL-TABS CONTAINER
         ======================================= -->
         
-        <div class="tabs-wrapper modal hidden">
-            <div class="tabs-content">
-                <div class="tab-list">
-                    <div data-tab="chapters" class="tab-item">Chapters</div>
-                    <div data-tab="search" class="tab-item">Search</div>
-                    <div data-tab="bookmarks" class="tab-item">Bookmarks</div>
-                </div>
-                <div class="tab-container">
-                    <div data-tab="chapters" class="tab">
-                        <div class="chapter-list">
-                            <a href="">Chapter 1</a>
+        <div class="modal hidden">
+
+            <div class="tabs-wrapper">
+                <div class="tabs-content">
+                    <h3 class="book-name"></h3>
+                    <div class="tab-list">
+                        <div data-tab="chapters" class="tab-item active">Chapters</div>
+                        <div data-tab="search" class="tab-item">Search</div>
+                        <div data-tab="bookmarks" class="tab-item">Bookmarks</div>
+                    </div>
+                    <div class="tab-container">
+                        <div data-tab="chapters" class="tab tab-active">
+                            <div class="chapter-list">
+                                <a href="" class="chapter-item active">Chapter 1</a>
+                                <a href="" class="chapter-item">Chapter 2</a>
+                                <a href="" class="chapter-item">Chapter 3</a>
+                                <a href="" class="chapter-item">Chapter 4</a>
+                                <a href="" class="chapter-item">Chapter 5</a>
+                                <a href="" class="chapter-item">Chapter 6</a>
+                                <a href="" class="chapter-item">Chapter 7</a>
+                                <a href="" class="chapter-item">Chapter 8</a>
+                                <a href="" class="chapter-item">Chapter 9</a>
+                                <a href="" class="chapter-item">Chapter 10</a>
+                                <a href="" class="chapter-item">Chapter 11</a>
+                            </div>
                         </div>
-                    </div>
-                    <div data-tab="search" class="tab">
-                        <div class="search-bar"><input type="text" class="search-input"><button class="do-search">S</button></div>
-                        <div class="search-results"></div>
-                    </div>
-                    <div data-tab="bookmarks" class="tab">
-                        <div class="bookmark-item"></div>
+                        <div data-tab="search" class="tab">
+                            <div class="search-bar"><input type="text" class="search-input" placeholder="Search"><button class="do-search">S</button></div>
+                            <div class="search-results">
+                                <a href="" class="search-item">
+                                    <span class="text">Улучшив память, вы улучшите всю вашу жизнь.</span>
+                                    <span class="pbar"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div data-tab="bookmarks" class="tab">
+                            <div class="bookmark-item"></div>
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- MENU-BAR
@@ -103,7 +123,7 @@
             </div>
 
             <div class="menu-tools">
-                <div class="menu-tool chapter-tool"></div>
+                <div class="menu-tool chapter-tool" onclick="ePubViewer.doModal()"></div>
                 <div class="menu-tool font-tool">
                     
                     <div class="menu-tooltip font-settings">
@@ -129,8 +149,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="menu-tool search-tool"></div>
-                <div class="menu-tool bookmark-tool"></div>
+                <div class="menu-tool search-tool" onclick="ePubViewer.doModal()"></div>
+                <div class="menu-tool bookmark-tool" onclick="ePubViewer.doModal()"></div>
             </div>
         </div>
         

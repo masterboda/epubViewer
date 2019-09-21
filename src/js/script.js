@@ -38,17 +38,23 @@ let App = function (el) {
             }
             return;
         }
+    }); 
+    
+    this.qsa(".tab-list .tab-item").forEach(el => el.addEventListener("click", this.onTabClick.bind(this, el.dataset.tab)));
+    this.qs(".tab[data-tab=search] .search-bar .search-input").addEventListener("keydown", event => {
+        if (event.keyCode == 13) this.qs(".tab[data-tab=search] .search-bar .do-search").click();
     });
+    this.qs(".tab[data-tab=search] .search-bar .do-search").addEventListener("click", this.onSearchClick.bind(this));
+    
+    //temorary!!!
+    this.qsa(".modal").forEach(el => el.addEventListener("click", e => {
+        if(e.target != el)
+            return;
+        else
+            el.classList.add("hidden");
+    }));
 
-    
-    
-    
-    // Old vesion:
-    // this.qsa(".tab-list .item").forEach(el => el.addEventListener("click", this.onTabClick.bind(this, el.dataset.tab)));
-    // this.qs(".menu-bar .search-bar .search-box").addEventListener("keydown", event => {
-    //     if (event.keyCode == 13) this.qs(".sidebar .search-bar .search-button").click();
-    // });
-    // this.qs(".sidebar .search-bar .search-button").addEventListener("click", this.onSearchClick.bind(this));
+
     // this.qs(".sidebar-wrapper").addEventListener("click", event => {
     //     try {
     //         if (event.target.classList.contains("sidebar-wrapper")) event.target.classList.add("out");
@@ -65,8 +71,8 @@ let App = function (el) {
 
     // New version
     this.qsa(".settings-row[data-type]").forEach(el => {
-        console.log('qsa(".settings-row[data-type]") :');
-        console.dir(el);
+        // console.log('qsa(".settings-row[data-type]") :');
+        // console.dir(el);
         Array.from(el.querySelectorAll(".settings-item[data-value]")).forEach(cel => cel.addEventListener("click", event => {
             this.setChipActive(el.dataset.type, cel.dataset.value);
         }));
@@ -139,7 +145,7 @@ App.prototype.doBook = function (url, opts) {
 
     this.state.book.ready.then(this.onBookReady.bind(this)).catch(this.fatal.bind(this, "error loading book"));
 
-    // this.state.book.loaded.navigation.then(this.onNavigationLoaded.bind(this)).catch(this.fatal.bind(this, "error loading toc"));
+    this.state.book.loaded.navigation.then(this.onNavigationLoaded.bind(this)).catch(this.fatal.bind(this, "error loading toc"));
     this.state.book.loaded.metadata.then(this.onBookMetadataLoaded.bind(this)).catch(this.fatal.bind(this, "error loading metadata"));
     // this.state.book.loaded.cover.then(this.onBookCoverLoaded.bind(this)).catch(this.fatal.bind(this, "error loading cover"));
 
@@ -305,9 +311,9 @@ App.prototype.doReset = function () {
     this.qs(".menu-bar .book-title").innerHTML = "";
     this.qs(".menu-bar .book-author").innerHTML = "";
     // this.qs(".bar .loc").innerHTML = "";
-    // this.qs(".search-results").innerHTML = "";
-    // this.qs(".search-box").value = "";
-    // this.qs(".toc-list").innerHTML = "";
+    this.qs(".search-results").innerHTML = "";
+    this.qs(".search-input").value = "";
+    this.qs(".chapter-list").innerHTML = "";
     // this.qs(".info .cover").src = "";
     // this.qs(".info .title").innerHTML = "";
     // this.qs(".info .series-info").classList.remove("hidden");
@@ -397,11 +403,11 @@ App.prototype.getNavItem = function(loc, ignoreHash) {
 
 App.prototype.onNavigationLoaded = function (nav) {
     console.log("navigation", nav);
-    let toc = this.qs(".toc-list");
+    let toc = this.qs(".chapter-list");
     toc.innerHTML = "";
     let handleItems = (items, indent) => {
         items.forEach(item => {
-            let a = toc.appendChild(this.el("a", "item"));
+            let a = toc.appendChild(this.el("a", "chapter-item"));
             a.href = item.href;
             a.dataset.href = item.href;
             a.innerHTML = `${"&nbsp;".repeat(indent*4)}${item.label.trim()}`;
@@ -416,7 +422,7 @@ App.prototype.onRenditionRelocated = function (event) {
     try {this.doDictionary(null);} catch (err) {}
     try {
         let navItem = this.getNavItem(event, false) || this.getNavItem(event, true);
-        this.qsa(".toc-list .item").forEach(el => el.classList[(navItem && el.dataset.href == navItem.href) ? "add" : "remove"]("active"));
+        this.qsa(".chapter-list .chapter-item").forEach(el => el.classList[(navItem && el.dataset.href == navItem.href) ? "add" : "remove"]("active"));
     } catch (err) {
         this.fatal("error updating toc", err);
     }
@@ -765,11 +771,11 @@ App.prototype.onResultClick = function (href, event) {
 
 App.prototype.doTab = function (tab) {
     try {
-        this.qsa(".tab-list .item").forEach(el => el.classList[(el.dataset.tab == tab) ? "add" : "remove"]("active"));
-        this.qsa(".tab-container .tab").forEach(el => el.classList[(el.dataset.tab != tab) ? "add" : "remove"]("hidden"));
-        try {
-            this.qs(".tab-container").scrollTop = 0;
-        } catch (err) {}
+        this.qsa(".tab-list .tab-item").forEach(el => el.classList[(el.dataset.tab == tab) ? "add" : "remove"]("active"));
+        this.qsa(".tab-container .tab").forEach(el => el.classList[(el.dataset.tab != tab) ? "remove" : "add"]("tab-active"));
+        // try {
+        //     this.qs(".tab-container").scrollTop = 0;
+        // } catch (err) {}
     } catch (err) {
         this.fatal("error showing tab", err);
     }
@@ -783,25 +789,32 @@ App.prototype.onTabClick = function (tab, event) {
 };
 
 App.prototype.onSearchClick = function (event) {
-    this.doSearch(this.qs(".sidebar .search-bar .search-box").value.trim()).then(results => {
-        this.qs(".sidebar .search-results").innerHTML = "";
-        let resultsEl = document.createDocumentFragment();
+    this.doSearch(this.qs(".search-bar .search-input").value.trim()).then(results => {
+        
+        let resultContainer = this.qs(".tab[data-tab=search] .search-results"),
+            resultsEl = document.createDocumentFragment();
+
+        resultContainer.innerHTML = "";
+
         results.slice(0, 200).forEach(result => {
-            let resultEl = resultsEl.appendChild(this.el("a", "item"));
+            let resultEl = resultsEl.appendChild(this.el("a", "search-item"));
             resultEl.href = result.cfi;
             resultEl.addEventListener("click", this.onResultClick.bind(this, result.cfi));
 
-            let textEl = resultEl.appendChild(this.el("div", "text"));
+            let textEl = resultEl.appendChild(this.el("span", "text"));
             textEl.innerText = result.excerpt.trim();
 
-            resultEl.appendChild(this.el("div", "pbar")).appendChild(this.el("div", "pbar-inner")).style.width = (this.state.book.locations.percentageFromCfi(result.cfi)*100).toFixed(3) + "%";
+            resultEl.appendChild(this.el("span", "pbar")).style.width = (this.state.book.locations.percentageFromCfi(result.cfi)*100).toFixed(3) + "%";
         });
-        this.qs(".app .sidebar .search-results").appendChild(resultsEl);
+
+        resultContainer.appendChild(resultsEl);
+
     }).catch(err => this.fatal("error searching book", err));
 };
 
-App.prototype.doSidebar = function () {
-    this.qs(".sidebar-wrapper").classList.toggle('out');
+//temporary!!!
+App.prototype.doModal = function () {
+    this.qs(".modal").classList.toggle('hidden');
 };
 
 let ePubViewer = null;
