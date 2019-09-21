@@ -96,7 +96,8 @@ body {
 .tabs-content .tab-list .tab-item{
     padding: 5px 10px;
     text-align: center;
-    min-width: 110px;
+    flex-basis: 100%;
+    max-width: 120px;
     color: var(--segundo);
     border: 1px solid var(--segundo);
     margin: -1px 0 0 -1px;
@@ -682,6 +683,9 @@ body {
 }
 
 @media only screen and (max-width: 620px) {
+    ::-webkit-scrollbar {
+        display: none;
+    }
     .app .menu-bar .title {
         display: none !important;
     }
@@ -689,6 +693,11 @@ body {
         justify-content: center;
         padding: 0 20px;
     }
+
+    .tabs-wrapper .search-bar, .tabs-wrapper .search-item {
+        width: 100%;
+    }
+
     .app .viewer {
         width: 100%;
     }
@@ -697,7 +706,7 @@ body {
     }
     .nav-arrows .next-btn {
         right: -20px;
-    } 
+    }
 }
 
 @media only screen and (max-width: 450px) {
