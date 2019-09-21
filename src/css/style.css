@@ -395,17 +395,14 @@ body {
     -moz-apperance: none;
     height: 4px;
     width: 100% !important;
-    cursor: pointer;
-    
-    background-image: -webkit-gradient(linear,
-        left top, 
-        right top, 
-        color-stop(0%, #3d66ef),
-        color-stop(0%, #e6e6e6));
-    
-    background-image: -moz-linear-gradient(left center,
-        #3d66ef 0%, #3d66ef 0%,
-        #e6e6e6 0%, #e6e6e6 100%);
+    cursor: pointer;    
+    background-image: -webkit-gradient(
+        linear,
+        left top,
+        right top,
+        color-stop(0, #3d66ef),
+        color-stop(0, #e6e6e6)
+    );
 }
 
 .rangebar::-moz-range-track {

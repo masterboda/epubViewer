@@ -602,6 +602,18 @@ App.prototype.loadFonts = function() {
 
 /* Progress bar
 ======================================= */
+    App.prototype.updateRangeBar = function (r) {
+        let x = r.value / r.max;
+        r.style.backgroundImage = [
+            '-webkit-gradient(',
+              'linear, ',
+              'left top, ',
+              'right top, ',
+              'color-stop(' + x + ', #3d66ef), ',
+              'color-stop(' + x + ', #e6e6e6)',
+            ')' 
+        ].join('');
+    }
 
 App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
     try {
@@ -611,7 +623,11 @@ App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
         range.min = 0;
         range.max = this.state.book.locations.length();
         range.value = event.start.location;
-        range.onchange = () => this.state.rendition.display(this.state.book.locations.cfiFromLocation(range.value));
+        this.updateRangeBar(range);
+        range.oninput = () => {
+            this.updateRangeBar(range);
+            this.state.rendition.display(this.state.book.locations.cfiFromLocation(range.value));
+        }
         
     } catch (err) {
         console.error("error updating indicators: " + err);
