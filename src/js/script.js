@@ -42,7 +42,10 @@ let App = function (el) {
     
     this.qsa(".tab-list .tab-item").forEach(el => el.addEventListener("click", this.onTabClick.bind(this, el.dataset.tab)));
     this.qs(".tab[data-tab=search] .search-bar .search-input").addEventListener("keydown", event => {
-        if (event.keyCode == 13) this.qs(".tab[data-tab=search] .search-bar .do-search").click();
+        if (event.keyCode == 13)
+            this.qs(".tab[data-tab=search] .search-bar .do-search").click();
+        else if (event.keyCode == 8 || event.keyCode == 46)
+            this.qs(".search-results").innerHTML = "";
     });
     this.qs(".tab[data-tab=search] .search-bar .do-search").addEventListener("click", this.onSearchClick.bind(this));
     
@@ -805,25 +808,32 @@ App.prototype.onTabClick = function (tab, event) {
 };
 
 App.prototype.onSearchClick = function (event) {
-    this.doSearch(this.qs(".search-bar .search-input").value.trim()).then(results => {
+    let q = this.qs(".search-bar .search-input").value.trim();
+    if(q == "") return;
+
+    this.doSearch(q).then(results => {
         
         let resultContainer = this.qs(".tab[data-tab=search] .search-results"),
             resultsEl = document.createDocumentFragment();
 
         resultContainer.innerHTML = "";
 
-        results.slice(0, 200).forEach(result => {
-            let resultEl = resultsEl.appendChild(this.el("a", "search-item"));
-            resultEl.href = result.cfi;
-            resultEl.addEventListener("click", this.onResultClick.bind(this, result.cfi));
-
-            let textEl = resultEl.appendChild(this.el("span", "text"));
-            textEl.innerText = result.excerpt.trim();
-
-            resultEl.appendChild(this.el("span", "pbar")).style.width = (this.state.book.locations.percentageFromCfi(result.cfi)*100).toFixed(3) + "%";
-        });
-
-        resultContainer.appendChild(resultsEl);
+        if(results.length > 0) {
+            results.slice(0, 200).forEach(result => {
+                let resultEl = resultsEl.appendChild(this.el("a", "search-item"));
+                resultEl.href = result.cfi;
+                resultEl.addEventListener("click", this.onResultClick.bind(this, result.cfi));
+    
+                let textEl = resultEl.appendChild(this.el("span", "text"));
+                textEl.innerText = result.excerpt.trim();
+    
+                resultEl.appendChild(this.el("span", "pbar")).style.width = (this.state.book.locations.percentageFromCfi(result.cfi)*100).toFixed(3) + "%";
+            });
+    
+            resultContainer.appendChild(resultsEl);
+        } else {
+            resultContainer.innerHTML = "<center>Matches not found</center>";
+        }
 
     }).catch(err => this.fatal("error searching book", err));
 };
