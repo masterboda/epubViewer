@@ -381,6 +381,7 @@ App.prototype.onTocItemClick = function (href, event) {
     // $(".blackbolt").css("display","none");
 
     this.state.rendition.display(href).catch(err => console.warn("error displaying page", err));
+    this.qsa(".modal").forEach(el => el.classList.add("hidden"));
     event.stopPropagation();
     event.preventDefault();
 
