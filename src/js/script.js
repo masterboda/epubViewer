@@ -163,7 +163,8 @@ App.prototype.doBook = function (url, opts) {
 
     this.state.rendition.display();
 
-    if (this.state.dictInterval) window.clearInterval(this.state.dictInterval);
+    if (this.state.dictInterval)
+        window.clearInterval(this.state.dictInterval);
     this.state.dictInterval = window.setInterval(this.checkDictionary.bind(this), 50);
     this.doDictionary(null);
 };
@@ -363,11 +364,13 @@ App.prototype.onBookReady = function (event) {
         console.log("locations generated", this.state.book.locations);
     }).catch(err => console.error("error generating locations", err));
 
-    this.qs(".item").addEventListener("click", myFunction);
 
-    function myFunction() {
-        document.getElementsByClassName("item").css("display","none");
-    }
+    //?????
+    // this.qs(".item").addEventListener("click", myFunction);
+
+    // function myFunction() {
+    //     document.getElementsByClassName("item").css("display","none");
+    // }
 };
 
 
@@ -376,9 +379,6 @@ App.prototype.onBookReady = function (event) {
 
 App.prototype.onTocItemClick = function (href, event) {
     console.log("tocClick", href);
-    // console.log(this.children.length);
-
-    // $(".blackbolt").css("display","none");
 
     this.state.rendition.display(href).catch(err => console.warn("error displaying page", err));
     this.qsa(".modal").forEach(el => el.classList.add("hidden"));
@@ -603,22 +603,21 @@ App.prototype.loadFonts = function() {
 
 /* Progress bar
 ======================================= */
-    App.prototype.updateRangeBar = function (r) {
-        let x = r.value / r.max;
-        r.style.backgroundImage = [
-            '-webkit-gradient(',
-              'linear, ',
-              'left top, ',
-              'right top, ',
-              'color-stop(' + x + ', #3d66ef), ',
-              'color-stop(' + x + ', #e6e6e6)',
-            ')' 
-        ].join('');
-    }
+App.prototype.updateRangeBar = function (r) {
+    let x = r.value / r.max;
+    r.style.backgroundImage = [
+        '-webkit-gradient(',
+            'linear, ',
+            'left top, ',
+            'right top, ',
+            'color-stop(' + x + ', #3d66ef), ',
+            'color-stop(' + x + ', #e6e6e6)',
+        ')' 
+    ].join('');
+}
 
 App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
     try {
-        // TODO: don't recreate every time the location changes.
         let range = this.qs('.bar .rangebar');
         range.classList.remove('hidden');
         range.min = 0;
@@ -780,6 +779,8 @@ App.prototype.doSearch = function (q) {
 App.prototype.onResultClick = function (href, event) {
     console.log("tocClick", href);
     this.state.rendition.display(href);
+    //temporary!!!
+    this.qsa(".modal").forEach(el => el.classList.add("hidden"));
     event.stopPropagation();
     event.preventDefault();
 };
@@ -788,9 +789,9 @@ App.prototype.doTab = function (tab) {
     try {
         this.qsa(".tab-list .tab-item").forEach(el => el.classList[(el.dataset.tab == tab) ? "add" : "remove"]("active"));
         this.qsa(".tab-container .tab").forEach(el => el.classList[(el.dataset.tab != tab) ? "remove" : "add"]("tab-active"));
-        // try {
-        //     this.qs(".tab-container").scrollTop = 0;
-        // } catch (err) {}
+        try {
+            this.qs(".tab-wrapper").scrollTop = 0;
+        } catch (err) {}
     } catch (err) {
         this.fatal("error showing tab", err);
     }
