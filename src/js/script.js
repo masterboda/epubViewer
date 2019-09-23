@@ -42,6 +42,7 @@ let App = function (el) {
     }); 
     
     this.qsa(".tab-list .tab-item").forEach(el => el.addEventListener("click", this.onTabClick.bind(this, el.dataset.tab)));
+    
     this.qs(".tab[data-tab=search] .search-bar .search-input").addEventListener("keydown", event => {
         if (event.keyCode == 13)
             this.qs(".tab[data-tab=search] .search-bar .do-search").click();
@@ -50,9 +51,18 @@ let App = function (el) {
     });
     this.qs(".tab[data-tab=search] .search-bar .do-search").addEventListener("click", this.onSearchClick.bind(this));
     
+    this.qs(".do-bookmark").addEventListener("click", () => {
+        let textInput = this.qs(".new-bookmark .bookmark-input"),
+            text = textInput.value.trim();
+
+        if (!text) return;
+
+        this.addBookm({title: text, href: ""});
+    });
+    
     //temorary!!!
     this.qsa(".modal").forEach(el => el.addEventListener("click", e => {
-        if(e.target != el)
+        if(e.target != el && !e.target.classList.contains("close-btn"))
             return;
         else
             el.classList.add("hidden");
@@ -75,8 +85,6 @@ let App = function (el) {
 
     // New version
     this.qsa(".settings-row[data-type]").forEach(el => {
-        // console.log('qsa(".settings-row[data-type]") :');
-        // console.dir(el);
         Array.from(el.querySelectorAll(".settings-item[data-value]")).forEach(cel => cel.addEventListener("click", event => {
             this.setChipActive(el.dataset.type, cel.dataset.value);
         }));
@@ -163,6 +171,7 @@ App.prototype.doBook = function (url, opts) {
     this.state.rendition.on("relocated", this.onRenditionRelocatedUpdateIndicators.bind(this));
     this.state.rendition.on("relocated", this.onRenditionRelocatedSavePos.bind(this));
     this.state.rendition.on("started", this.onRenditionStartedRestorePos.bind(this));
+    this.state.rendition.on("started", this.restoreBookm.bind(this));
     this.state.rendition.on("displayError", this.fatal.bind(this, "error rendering book"));
 
     this.state.rendition.display();
@@ -277,10 +286,16 @@ App.prototype.updateBookm = function () {
             this.rmBookm(i);
         });
     });
+
+    this.storeBookm();
 }
 
-App.prototype.storeBookm = function() {
+App.prototype.storeBookm = function () {
     localStorage.setItem(`${this.state.book.key()}:bookm`, JSON.stringify(this.bookmArr));
+}
+
+App.prototype.restoreBookm = function () {
+    this.addBookm(JSON.parse(localStorage.getItem(`${this.state.book.key()}:bookm`)));
 }
 
 App.prototype.doOpenBook = function () {
@@ -344,6 +359,7 @@ App.prototype.doReset = function () {
     // this.qs(".sidebar-wrapper").classList.add("out");
     this.qs(".menu-bar .book-title").innerHTML = "";
     this.qs(".menu-bar .book-author").innerHTML = "";
+    this.qs(".tab[data-tab=bookmarks] .bookmark-list").innerHTML = "";
     // this.qs(".bar .loc").innerHTML = "";
     this.qs(".search-results").innerHTML = "";
     this.qs(".search-input").value = "";
@@ -380,6 +396,7 @@ App.prototype.onBookReady = function (event) {
     // this.qs(".sidebar-button").classList.remove("hidden");
     this.qs("button.prev").classList.remove("hidden");
     this.qs("button.next").classList.remove("hidden");
+
 
     console.log("bookKey", this.state.book.key());
 
@@ -442,8 +459,7 @@ App.prototype.onNavigationLoaded = function (nav) {
     let handleItems = (items, indent) => {
         items.forEach(item => {
             let a = toc.appendChild(this.el("a", "chapter-item"));
-            a.href = item.href;
-            a.dataset.href = item.href;
+            a.href = a.dataset.href = item.href;
             a.innerHTML = `${"&nbsp;".repeat(indent*4)}${item.label.trim()}`;
             a.addEventListener("click", this.onTocItemClick.bind(this, item.href));
             handleItems(item.subitems, indent + 1);
@@ -654,7 +670,7 @@ App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
         let range = this.qs('.bar .rangebar');
         range.classList.remove('hidden');
         range.min = 0;
-        range.max = this.state.book.locations.length();
+        range.max = this.state.book.locations.length() - 1 ;
         range.value = event.start.location;
         this.updateRangeBar(range);
         range.oninput = () => {
