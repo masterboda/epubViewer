@@ -24,6 +24,7 @@ window.onerror = function (msg, url, line, column, err) {
 
 let App = function (el) {
     this.appElm = el;
+    this.bookmArr = [];
     this.state = {};
     this.doReset();
 
@@ -41,14 +42,25 @@ let App = function (el) {
     }); 
     
     this.qsa(".tab-list .tab-item").forEach(el => el.addEventListener("click", this.onTabClick.bind(this, el.dataset.tab)));
+    
     this.qs(".tab[data-tab=search] .search-bar .search-input").addEventListener("keydown", event => {
-        if (event.keyCode == 13) this.qs(".tab[data-tab=search] .search-bar .do-search").click();
+        if (event.keyCode == 13)
+            this.qs(".tab[data-tab=search] .search-bar .do-search").click();
+        else if (event.keyCode == 8 || event.keyCode == 46) //on backspace or delete click
+            this.qs(".search-results").innerHTML = "";
     });
     this.qs(".tab[data-tab=search] .search-bar .do-search").addEventListener("click", this.onSearchClick.bind(this));
     
+    
+    this.qs(".do-bookmark").addEventListener("click", this.makeBookmark);
+    this.qs(".new-bookmark .bookmark-input").addEventListener("keydown", event => {
+        if(event.keyCode == 13)
+            this.makeBookmark();
+    });
+    
     //temorary!!!
     this.qsa(".modal").forEach(el => el.addEventListener("click", e => {
-        if(e.target != el)
+        if(e.target != el && !e.target.classList.contains("close-btn"))
             return;
         else
             el.classList.add("hidden");
@@ -71,16 +83,11 @@ let App = function (el) {
 
     // New version
     this.qsa(".settings-row[data-type]").forEach(el => {
-        // console.log('qsa(".settings-row[data-type]") :');
-        // console.dir(el);
         Array.from(el.querySelectorAll(".settings-item[data-value]")).forEach(cel => cel.addEventListener("click", event => {
             this.setChipActive(el.dataset.type, cel.dataset.value);
         }));
     });
 
-    this.qs(".bookmark-tool").addEventListener("click", function() {
-        this.classList.toggle("bookmarked")
-    });
     this.qs("button.prev").addEventListener("click", () => this.state.rendition.prev());
     this.qs("button.next").addEventListener("click", () => this.state.rendition.next());
     // this.qs("button.open").addEventListener("click", () => this.doOpenBook());
@@ -159,11 +166,13 @@ App.prototype.doBook = function (url, opts) {
     this.state.rendition.on("relocated", this.onRenditionRelocatedUpdateIndicators.bind(this));
     this.state.rendition.on("relocated", this.onRenditionRelocatedSavePos.bind(this));
     this.state.rendition.on("started", this.onRenditionStartedRestorePos.bind(this));
+    this.state.rendition.on("started", this.restoreBookm.bind(this));
     this.state.rendition.on("displayError", this.fatal.bind(this, "error rendering book"));
 
     this.state.rendition.display();
 
-    if (this.state.dictInterval) window.clearInterval(this.state.dictInterval);
+    if (this.state.dictInterval)
+        window.clearInterval(this.state.dictInterval);
     this.state.dictInterval = window.setInterval(this.checkDictionary.bind(this), 50);
     this.doDictionary(null);
 };
@@ -232,8 +241,10 @@ App.prototype.changeFS = function(mode) {
         sizes = [4,8,9,10,12,14,16,18,30],
         currFZ = +fontEl.dataset.fontSize,
         btns = this.qsa("[data-font-size] .settings-item");
-        btns[0].classList.remove('disabled');
-        btns[1].classList.remove('disabled');
+
+    btns[0].classList.remove('disabled');
+    btns[1].classList.remove('disabled');
+
     if (mode == -1 && currFZ == 8) {
         btns[0].classList.add('disabled');
         return;
@@ -247,7 +258,71 @@ App.prototype.changeFS = function(mode) {
     // localStorage.setItem(`ePubViewer:font-size`, currFZ);
     this.applyTheme();
 }
-//*/
+
+
+//Bookmarks
+
+// App.onBookmItemClick = function (href, event) {
+//     this.state.rendition.display(this.state.book.locations.cfiFromLocation(href)).catch(err => console.warn("error displaying page", err));
+//     this.qsa(".modal").forEach(el => el.classList.add("hidden"));
+//     event.stopPropagation();
+//     event.preventDefault();
+// }
+App.prototype.makeBookmark = function () {
+    let textInput = this.qs(".new-bookmark .bookmark-input"),
+        text = textInput.value.trim();
+
+    if (!text) return;
+
+    this.addBookm({title: text, href: this.qs(".rangebar").value});
+    textInput.value = "";
+}
+App.prototype.addBookm = function (item) {
+    console.log(item);
+    this.bookmArr.push(item);
+    this.updateBookm();
+}
+App.prototype.rmBookm = function (index) {
+    this.bookmArr.splice(index, 1);
+    this.updateBookm();
+}
+App.prototype.updateBookm = function () {
+    let bookmElm = this.qs(".tab[data-tab=bookmarks] .bookmark-list");
+        bookmElm.innerHTML = "";
+
+    this.bookmArr.forEach((item, i) => {
+        let bookmark = bookmElm.appendChild(this.el("div", "bookmark")),
+            a = bookmark.appendChild(this.el("a", "bookmark-item")),
+            btn = bookmark.appendChild(this.el("span", "rm-bookmark"));
+
+        a.href = a.dataset.href = item.href;
+        a.innerText = item.title;
+        a.addEventListener("click", event => {
+            this.state.rendition.display(this.state.book.locations.cfiFromLocation(item.href)).catch(err => console.warn("error displaying page", err));
+            this.qsa(".modal").forEach(el => el.classList.add("hidden"));
+            event.stopPropagation();
+            event.preventDefault();
+        });
+
+        btn.addEventListener("click", () => {
+            this.rmBookm(i);
+        });
+    });
+
+    this.storeBookm();
+}
+
+App.prototype.storeBookm = function () {
+    localStorage.setItem(`${this.state.book.key()}:bookm`, JSON.stringify(this.bookmArr));
+}
+
+App.prototype.restoreBookm = function () {
+    let localBookm = JSON.parse(localStorage.getItem(`${this.state.book.key()}:bookm`));
+    if(localBookm) {
+        this.bookmArr = localBookm;
+        this.updateBookm();
+    }
+}
 
 App.prototype.doOpenBook = function () {
     var fi = document.createElement("input");
@@ -310,6 +385,7 @@ App.prototype.doReset = function () {
     // this.qs(".sidebar-wrapper").classList.add("out");
     this.qs(".menu-bar .book-title").innerHTML = "";
     this.qs(".menu-bar .book-author").innerHTML = "";
+    this.qs(".tab[data-tab=bookmarks] .bookmark-list").innerHTML = "";
     // this.qs(".bar .loc").innerHTML = "";
     this.qs(".search-results").innerHTML = "";
     this.qs(".search-input").value = "";
@@ -347,6 +423,7 @@ App.prototype.onBookReady = function (event) {
     this.qs("button.prev").classList.remove("hidden");
     this.qs("button.next").classList.remove("hidden");
 
+
     console.log("bookKey", this.state.book.key());
 
     // this.qs(".info .cover").src = "./images/logo.png";
@@ -363,11 +440,13 @@ App.prototype.onBookReady = function (event) {
         console.log("locations generated", this.state.book.locations);
     }).catch(err => console.error("error generating locations", err));
 
-    this.qs(".item").addEventListener("click", myFunction);
 
-    function myFunction() {
-        document.getElementsByClassName("item").css("display","none");
-    }
+    //?????
+    // this.qs(".item").addEventListener("click", myFunction);
+
+    // function myFunction() {
+    //     document.getElementsByClassName("item").css("display","none");
+    // }
 };
 
 
@@ -376,11 +455,9 @@ App.prototype.onBookReady = function (event) {
 
 App.prototype.onTocItemClick = function (href, event) {
     console.log("tocClick", href);
-    // console.log(this.children.length);
-
-    // $(".blackbolt").css("display","none");
 
     this.state.rendition.display(href).catch(err => console.warn("error displaying page", err));
+    this.qsa(".modal").forEach(el => el.classList.add("hidden"));
     event.stopPropagation();
     event.preventDefault();
 
@@ -408,8 +485,7 @@ App.prototype.onNavigationLoaded = function (nav) {
     let handleItems = (items, indent) => {
         items.forEach(item => {
             let a = toc.appendChild(this.el("a", "chapter-item"));
-            a.href = item.href;
-            a.dataset.href = item.href;
+            a.href = a.dataset.href = item.href;
             a.innerHTML = `${"&nbsp;".repeat(indent*4)}${item.label.trim()}`;
             a.addEventListener("click", this.onTocItemClick.bind(this, item.href));
             handleItems(item.subitems, indent + 1);
@@ -477,18 +553,18 @@ App.prototype.onRenditionClick = function (event) {
     try {
         if (event.target.tagName.toLowerCase() == "a" && event.target.href) return;
         if (event.target.parentNode.tagName.toLowerCase() == "a" && event.target.parentNode.href) return;
-        if (window.getSelection().toString().length !== 0) return;
-        if (this.state.rendition.manager.getContents()[0].window.getSelection().toString().length !== 0) return;
+        // if (window.getSelection().toString().length !== 0) return;
+        // if (this.state.rendition.manager.getContents()[0].window.getSelection().toString().length !== 0) return;
     } catch (err) {}
 
     let wrapper = this.state.rendition.manager.container;
     let third = wrapper.clientWidth / 3;
     let x = event.pageX - wrapper.scrollLeft;
     let b = null;
-    if (x > wrapper.clientWidth - 20) {
+    /*if (x > wrapper.clientWidth - 20) {
         event.preventDefault();
         // this.doSidebar();
-    } else if (x < third) {
+    } else*/ if (x < third) {
         event.preventDefault();
         this.state.rendition.prev();
         b = this.qs(".bar button.prev");
@@ -602,31 +678,42 @@ App.prototype.loadFonts = function() {
 
 /* Progress bar
 ======================================= */
-    App.prototype.updateRangeBar = function (r) {
-        let x = r.value / r.max;
-        r.style.backgroundImage = [
-            '-webkit-gradient(',
-              'linear, ',
-              'left top, ',
-              'right top, ',
-              'color-stop(' + x + ', #3d66ef), ',
-              'color-stop(' + x + ', #e6e6e6)',
-            ')' 
-        ].join('');
-    }
+App.prototype.updateRangeBar = function (r) {
+    let x = r.value / r.max;
+    r.style.backgroundImage = [
+        '-webkit-gradient(',
+            'linear, ',
+            'left top, ',
+            'right top, ',
+            'color-stop(' + x + ', #3d66ef), ',
+            'color-stop(' + x + ', #e6e6e6)',
+        ')' 
+    ].join('');
+}
 
 App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
     try {
-        // TODO: don't recreate every time the location changes.
+        //progress update
         let range = this.qs('.bar .rangebar');
         range.classList.remove('hidden');
         range.min = 0;
-        range.max = this.state.book.locations.length();
+        range.max = this.state.book.locations.length() - 1 ;
         range.value = event.start.location;
         this.updateRangeBar(range);
         range.oninput = () => {
             this.updateRangeBar(range);
             this.state.rendition.display(this.state.book.locations.cfiFromLocation(range.value));
+        }
+
+        //bookmark indicator update
+        let icon = this.qs(".menu-bar .bookmark-tool");
+        for(let item of this.bookmArr) {
+            if(item.href == event.start.location) {
+                icon.classList.add("bookmarked");
+                break;
+            }
+
+            icon.classList.remove("bookmarked");
         }
         
     } catch (err) {
@@ -779,6 +866,8 @@ App.prototype.doSearch = function (q) {
 App.prototype.onResultClick = function (href, event) {
     console.log("tocClick", href);
     this.state.rendition.display(href);
+    //temporary!!!
+    this.qsa(".modal").forEach(el => el.classList.add("hidden"));
     event.stopPropagation();
     event.preventDefault();
 };
@@ -787,9 +876,9 @@ App.prototype.doTab = function (tab) {
     try {
         this.qsa(".tab-list .tab-item").forEach(el => el.classList[(el.dataset.tab == tab) ? "add" : "remove"]("active"));
         this.qsa(".tab-container .tab").forEach(el => el.classList[(el.dataset.tab != tab) ? "remove" : "add"]("tab-active"));
-        // try {
-        //     this.qs(".tab-container").scrollTop = 0;
-        // } catch (err) {}
+        try {
+            this.qs(".tab-wrapper").scrollTop = 0;
+        } catch (err) {}
     } catch (err) {
         this.fatal("error showing tab", err);
     }
@@ -803,25 +892,32 @@ App.prototype.onTabClick = function (tab, event) {
 };
 
 App.prototype.onSearchClick = function (event) {
-    this.doSearch(this.qs(".search-bar .search-input").value.trim()).then(results => {
+    let q = this.qs(".search-bar .search-input").value.trim();
+    if(q == "") return;
+
+    this.doSearch(q).then(results => {
         
         let resultContainer = this.qs(".tab[data-tab=search] .search-results"),
             resultsEl = document.createDocumentFragment();
 
         resultContainer.innerHTML = "";
 
-        results.slice(0, 200).forEach(result => {
-            let resultEl = resultsEl.appendChild(this.el("a", "search-item"));
-            resultEl.href = result.cfi;
-            resultEl.addEventListener("click", this.onResultClick.bind(this, result.cfi));
-
-            let textEl = resultEl.appendChild(this.el("span", "text"));
-            textEl.innerText = result.excerpt.trim();
-
-            resultEl.appendChild(this.el("span", "pbar")).style.width = (this.state.book.locations.percentageFromCfi(result.cfi)*100).toFixed(3) + "%";
-        });
-
-        resultContainer.appendChild(resultsEl);
+        if(results.length > 0) {
+            results.slice(0, 200).forEach(result => {
+                let resultEl = resultsEl.appendChild(this.el("a", "search-item"));
+                resultEl.href = result.cfi;
+                resultEl.addEventListener("click", this.onResultClick.bind(this, result.cfi));
+    
+                let textEl = resultEl.appendChild(this.el("span", "text"));
+                textEl.innerText = result.excerpt.trim();
+    
+                resultEl.appendChild(this.el("span", "pbar")).style.width = (this.state.book.locations.percentageFromCfi(result.cfi)*100).toFixed(3) + "%";
+            });
+    
+            resultContainer.appendChild(resultsEl);
+        } else {
+            resultContainer.innerHTML = "<center>Matches not found</center>";
+        }
 
     }).catch(err => this.fatal("error searching book", err));
 };

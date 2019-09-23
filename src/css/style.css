@@ -12,6 +12,9 @@ h1, h2, h3, h4, h5, h6, p {
 ::-webkit-scrollbar {
     width: 8px;
 }
+::-webkit-scrollbar-track {
+    background: #e6e6e6;
+}
 ::-webkit-scrollbar-thumb {
     background: var(--segundo);
     border-radius: 4px;
@@ -28,6 +31,29 @@ button:active,
 .hidden {
     display: none !important;
 }
+
+.primary-btn {
+    border: none;
+    cursor: pointer;
+    background: var(--segundo);
+    color: #fff;
+    font-size: 15px;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, .2);
+    transition: background .3s;
+}
+
+.btn-right {
+    border-radius: 0 5px 5px 0;
+}
+
+.btn-left {
+    border-radius: 5px 0 0 5px;
+}
+
+.primary-btn:hover {
+    background: var(--primero);
+}
+
 .clearfix::after {
     content: '';
     display: block;
@@ -67,7 +93,7 @@ body {
     right: 0;
     bottom: 0;
     overflow-y: auto;
-    background: rgba(36, 38, 128, .6);
+    background: rgba(36, 38, 128, .4);
 }
 
 .app .tabs-wrapper {
@@ -75,9 +101,22 @@ body {
     overflow: hidden;
     padding: 30px;
     max-width: 500px;
-    border-radius: 10px;
+    position: relative;
+    border-radius: 25px;
     box-shadow: 0 0px 45px rgba(0, 0, 0, 0.4), 0 0px 15px rgba(0, 0, 0, 0.24);
     margin: 100px auto;
+}
+
+.app .tabs-wrapper .close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    width: 50px;
+    height: 50px;
+    background: url(../images/icons/close-alone.png) center no-repeat var(--segundo);
+    background-size: 23px;
+    border-radius: 0 25px 0 25px;
 }
 
 .app .tabs-wrapper .book-name{
@@ -132,15 +171,17 @@ body {
     display: block;
     font-size: 16px;
     text-decoration: none;
-    color: #333;
+    color: #3d66ef;
     padding: 15px 0;
     border-bottom: 1px solid #aaa;
     transition: background .3s, color .3s;
 }
 
-.tab .chapter-list .chapter-item:hover,
+.tab .chapter-list .chapter-item:hover {
+    color: var(--segundo);
+}
 .tab .chapter-list .chapter-item.active {
-    color: var(--primero);
+    color: #222;
 }
 
 /* Search tab */
@@ -154,6 +195,7 @@ body {
 
 .tab .search-bar input {
     width: calc(100% - 45px);
+    float: left;
     height: 100%;
     border: none;
     padding: 8px;
@@ -166,7 +208,9 @@ body {
     position: relative;
     border: none;
     cursor: pointer;
-    background: none;
+    background-color: none;
+    background: url(../images/icons/search-btn.png) center no-repeat;
+    background-size: 25px;
 }
 .tab .search-bar button:before {
     content: '';
@@ -201,8 +245,71 @@ body {
     left: 0;
     bottom: 0;
     height: 1px;
-    background: #333;
+    background: var(--segundo);
 }
+
+/* Bookmark tab */
+
+.tab[data-tab=bookmarks] .new-bookmark{
+    margin: 25px auto;
+    height: 40px;
+    width: 100%;
+    display: flex;
+    flex-basis: 0%;
+}
+
+.tab[data-tab=bookmarks] .new-bookmark .bookmark-input {
+    height: 100%;
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, .2);
+    border: none;
+    padding: 10px;
+    width: 100%;
+    flex-grow: 100;
+}
+
+.tab[data-tab=bookmarks] .new-bookmark .do-bookmark {
+    height: 100%;
+    padding: 0 10px;
+}
+
+.bookmark-list .bookmark {
+    border-bottom: 1px solid #aaa;
+    padding-right: 24px;
+    position: relative;
+    /* height: auto; */
+}
+
+.bookmark-list .bookmark-item {
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    color: #333;
+    transition: color .3s;
+    padding: 15px 0;
+}
+
+.bookmark-list .bookmark-item:hover {
+    color: var(--primero);
+}
+
+.bookmark-list .rm-bookmark {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    background: url(../images/icons/close@2x.png) center no-repeat;
+    background-size: 22px;
+    transition: opacity .2s;
+}
+
+.bookmark-list .rm-bookmark:hover {
+    opacity: .8;
+}
+
 
 /* Menu bar */
 .app .menu-bar {
@@ -237,7 +344,7 @@ body {
 .app .menu-bar .title .book-title{
     font-size: 18px;
     font-weight: 600;
-    color: var(--segundo);
+    color: #3d66ef;
     padding-bottom: 3px;
 }
 
@@ -269,7 +376,7 @@ body {
 .app .menu-bar .menu-tool.chapter-tool { background-image: url(../images/icons/nav.png); }
 .app .menu-bar .menu-tool.bookmark-tool { background-image: url(../images/icons/bookmark.png); }
 .app .menu-bar .menu-tool.bookmark-tool.bookmarked { background-image: url(../images/icons/bookmark-filled.png); }
-.app .menu-bar .menu-tool:hover { background-color: var(--cuarto); }
+/* .app .menu-bar .menu-tool:hover { background-color: var(--cuarto); } */
 
 .app .menu-bar .menu-tooltip {
     position: absolute;
@@ -283,7 +390,7 @@ body {
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 0 10px #ddd;
-    transition: transform .4s;
+    transition: transform .45s;
 }
 
 .app .menu-bar .menu-tooltip.tooltip-active {
@@ -357,6 +464,12 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+    transition: opacity .3s;
+}
+
+.nav-arrows .prev-btn:hover,
+.nav-arrows .next-btn:hover {
+    opacity: .7;
 }
 
 .nav-arrows .prev-btn {
@@ -682,8 +795,9 @@ body {
     font-size: 13px;
     margin-right: 15px;
 }
-.app .footer img {
+.app .footer .brand {
     height: 100%;
+    max-height: 7vh;
 }
 
 @media only screen and (max-width: 950px) {
@@ -703,6 +817,8 @@ body {
     }
     .app .menu-bar {
         justify-content: center;
+        min-height: 60px;
+        max-height: 75px;
         padding: 0 20px;
     }
 
@@ -712,6 +828,7 @@ body {
 
     .app .viewer {
         width: 100%;
+        padding: 25px 0;
     }
     .nav-arrows .prev-btn {
         left: -20px;
@@ -725,8 +842,4 @@ body {
     .app .nav-arrows {
         display: none;
     }
-}
-
-.brand{
-    max-height: 7vh;  
 }
