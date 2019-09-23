@@ -57,7 +57,8 @@ let App = function (el) {
 
         if (!text) return;
 
-        this.addBookm({title: text, href: "this.book.start.cfi"});
+        this.addBookm({title: text, href: this.qs(".rangebar").value});
+        textInput.value = "";
     });
     
     //temorary!!!
@@ -266,6 +267,14 @@ App.prototype.changeFS = function(mode) {
 
 
 //Bookmarks
+
+// App.onBookmItemClick = function (href, event) {
+//     this.state.rendition.display(this.state.book.locations.cfiFromLocation(href)).catch(err => console.warn("error displaying page", err));
+//     this.qsa(".modal").forEach(el => el.classList.add("hidden"));
+//     event.stopPropagation();
+//     event.preventDefault();
+// }
+
 App.prototype.addBookm = function (item) {
     console.log(item);
     this.bookmArr.push(item);
@@ -286,6 +295,13 @@ App.prototype.updateBookm = function () {
 
         a.href = a.dataset.href = item.href;
         a.innerText = item.title;
+        a.addEventListener("click", event => {
+            this.state.rendition.display(this.state.book.locations.cfiFromLocation(item.href)).catch(err => console.warn("error displaying page", err));
+            this.qsa(".modal").forEach(el => el.classList.add("hidden"));
+            event.stopPropagation();
+            event.preventDefault();
+        });
+
         btn.addEventListener("click", () => {
             this.rmBookm(i);
         });
@@ -300,9 +316,10 @@ App.prototype.storeBookm = function () {
 
 App.prototype.restoreBookm = function () {
     let localBookm = JSON.parse(localStorage.getItem(`${this.state.book.key()}:bookm`));
-    if(localBookm)
-        console.log(localBookm)
-        this.addBookm(localBookm.values());
+    if(localBookm) {
+        this.bookmArr = localBookm;
+        this.updateBookm();
+    }
 }
 
 App.prototype.doOpenBook = function () {
