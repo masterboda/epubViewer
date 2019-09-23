@@ -91,9 +91,6 @@ let App = function (el) {
         }));
     });
 
-    this.qs(".bookmark-tool").addEventListener("click", function() {
-        this.classList.toggle("bookmarked")
-    });
     this.qs("button.prev").addEventListener("click", () => this.state.rendition.prev());
     this.qs("button.next").addEventListener("click", () => this.state.rendition.next());
     // this.qs("button.open").addEventListener("click", () => this.doOpenBook());
@@ -691,6 +688,7 @@ App.prototype.updateRangeBar = function (r) {
 
 App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
     try {
+        //progress update
         let range = this.qs('.bar .rangebar');
         range.classList.remove('hidden');
         range.min = 0;
@@ -700,6 +698,16 @@ App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
         range.oninput = () => {
             this.updateRangeBar(range);
             this.state.rendition.display(this.state.book.locations.cfiFromLocation(range.value));
+        }
+
+        //bookmark indicator update
+        for(let item of this.bookmArr) {
+            if(item.href == event.start.location) {
+                this.qs(".menu-bar .bookmark-tool").classList.add("bookmarked");
+                break;
+            }
+
+            this.qs(".menu-bar .bookmark-tool").classList.remove("bookmarked");
         }
         
     } catch (err) {
