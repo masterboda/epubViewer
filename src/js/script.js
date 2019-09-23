@@ -24,6 +24,7 @@ window.onerror = function (msg, url, line, column, err) {
 
 let App = function (el) {
     this.appElm = el;
+    this.bookmArr = [];
     this.state = {};
     this.doReset();
 
@@ -44,7 +45,7 @@ let App = function (el) {
     this.qs(".tab[data-tab=search] .search-bar .search-input").addEventListener("keydown", event => {
         if (event.keyCode == 13)
             this.qs(".tab[data-tab=search] .search-bar .do-search").click();
-        else if (event.keyCode == 8 || event.keyCode == 46)
+        else if (event.keyCode == 8 || event.keyCode == 46) //on backspace or delete click
             this.qs(".search-results").innerHTML = "";
     });
     this.qs(".tab[data-tab=search] .search-bar .do-search").addEventListener("click", this.onSearchClick.bind(this));
@@ -252,6 +253,35 @@ App.prototype.changeFS = function(mode) {
     this.applyTheme();
 }
 //*/
+
+App.prototype.addBookm = function (item) {
+    this.bookmArr.push(item);
+    this.updateBookm();
+}
+App.prototype.rmBookm = function (index) {
+    this.bookmArr.splice(index, 1);
+    this.updateBookm();
+}
+App.prototype.updateBookm = function () {
+    let bookmElm = this.qs(".tab[data-tab=bookmarks] .bookmark-list");
+        bookmElm.innerHTML = "";
+
+    this.bookmArr.forEach((item, i) => {
+        let bookmark = bookmElm.appendChild(this.el("div", "bookmark")),
+            a = bookmark.appendChild(this.el("a", "bookmark-item")),
+            btn = bookmark.appendChild(this.el("span", "rm-bookmark"));
+
+        a.href = a.dataset.href = item.href;
+        a.innerText = item.title;
+        btn.addEventListener("click", () => {
+            this.rmBookm(i);
+        });
+    });
+}
+
+App.prototype.storeBookm = function() {
+    localStorage.setItem(`${this.state.book.key()}:bookm`, JSON.stringify(this.bookmArr));
+}
 
 App.prototype.doOpenBook = function () {
     var fi = document.createElement("input");
@@ -481,18 +511,18 @@ App.prototype.onRenditionClick = function (event) {
     try {
         if (event.target.tagName.toLowerCase() == "a" && event.target.href) return;
         if (event.target.parentNode.tagName.toLowerCase() == "a" && event.target.parentNode.href) return;
-        if (window.getSelection().toString().length !== 0) return;
-        if (this.state.rendition.manager.getContents()[0].window.getSelection().toString().length !== 0) return;
+        // if (window.getSelection().toString().length !== 0) return;
+        // if (this.state.rendition.manager.getContents()[0].window.getSelection().toString().length !== 0) return;
     } catch (err) {}
 
     let wrapper = this.state.rendition.manager.container;
     let third = wrapper.clientWidth / 3;
     let x = event.pageX - wrapper.scrollLeft;
     let b = null;
-    if (x > wrapper.clientWidth - 20) {
+    /*if (x > wrapper.clientWidth - 20) {
         event.preventDefault();
         // this.doSidebar();
-    } else if (x < third) {
+    } else*/ if (x < third) {
         event.preventDefault();
         this.state.rendition.prev();
         b = this.qs(".bar button.prev");

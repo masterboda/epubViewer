@@ -101,9 +101,22 @@ body {
     overflow: hidden;
     padding: 30px;
     max-width: 500px;
-    border-radius: 10px;
+    position: relative;
+    border-radius: 25px;
     box-shadow: 0 0px 45px rgba(0, 0, 0, 0.4), 0 0px 15px rgba(0, 0, 0, 0.24);
     margin: 100px auto;
+}
+
+.app .tabs-wrapper .close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    width: 50px;
+    height: 50px;
+    background: url(../images/icons/close-alone.png) center no-repeat var(--segundo);
+    background-size: 23px;
+    border-radius: 0 25px 0 25px;
 }
 
 .app .tabs-wrapper .book-name{
@@ -158,15 +171,17 @@ body {
     display: block;
     font-size: 16px;
     text-decoration: none;
-    color: #333;
+    color: #3d66ef;
     padding: 15px 0;
     border-bottom: 1px solid #aaa;
     transition: background .3s, color .3s;
 }
 
-.tab .chapter-list .chapter-item:hover,
+.tab .chapter-list .chapter-item:hover {
+    color: var(--segundo);
+}
 .tab .chapter-list .chapter-item.active {
-    color: var(--primero);
+    color: #222;
 }
 
 /* Search tab */
@@ -286,7 +301,7 @@ body {
     transform: translateY(-50%);
     width: 22px;
     height: 22px;
-    background: url(../images/icons/close.png) center no-repeat;
+    background: url(../images/icons/close@2x.png) center no-repeat;
     background-size: 22px;
     transition: opacity .2s;
 }
@@ -329,7 +344,7 @@ body {
 .app .menu-bar .title .book-title{
     font-size: 18px;
     font-weight: 600;
-    color: var(--segundo);
+    color: #3d66ef;
     padding-bottom: 3px;
 }
 
