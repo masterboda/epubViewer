@@ -57,7 +57,7 @@ let App = function (el) {
 
         if (!text) return;
 
-        this.addBookm({title: text, href: ""});
+        this.addBookm({title: text, href: "this.book.start.cfi"});
     });
     
     //temorary!!!
@@ -246,8 +246,10 @@ App.prototype.changeFS = function(mode) {
         sizes = [4,8,9,10,12,14,16,18,30],
         currFZ = +fontEl.dataset.fontSize,
         btns = this.qsa("[data-font-size] .settings-item");
-        btns[0].classList.remove('disabled');
-        btns[1].classList.remove('disabled');
+
+    btns[0].classList.remove('disabled');
+    btns[1].classList.remove('disabled');
+
     if (mode == -1 && currFZ == 8) {
         btns[0].classList.add('disabled');
         return;
@@ -261,9 +263,11 @@ App.prototype.changeFS = function(mode) {
     // localStorage.setItem(`ePubViewer:font-size`, currFZ);
     this.applyTheme();
 }
-//*/
 
+
+//Bookmarks
 App.prototype.addBookm = function (item) {
+    console.log(item);
     this.bookmArr.push(item);
     this.updateBookm();
 }
@@ -295,7 +299,10 @@ App.prototype.storeBookm = function () {
 }
 
 App.prototype.restoreBookm = function () {
-    this.addBookm(JSON.parse(localStorage.getItem(`${this.state.book.key()}:bookm`)));
+    let localBookm = JSON.parse(localStorage.getItem(`${this.state.book.key()}:bookm`));
+    if(localBookm)
+        console.log(localBookm)
+        this.addBookm(localBookm.values());
 }
 
 App.prototype.doOpenBook = function () {
