@@ -51,14 +51,11 @@ let App = function (el) {
     });
     this.qs(".tab[data-tab=search] .search-bar .do-search").addEventListener("click", this.onSearchClick.bind(this));
     
-    this.qs(".do-bookmark").addEventListener("click", () => {
-        let textInput = this.qs(".new-bookmark .bookmark-input"),
-            text = textInput.value.trim();
-
-        if (!text) return;
-
-        this.addBookm({title: text, href: this.qs(".rangebar").value});
-        textInput.value = "";
+    
+    this.qs(".do-bookmark").addEventListener("click", this.makeBookmark);
+    this.qs(".new-bookmark .bookmark-input").addEventListener("keydown", event => {
+        if(event.keyCode == 13)
+            this.makeBookmark();
     });
     
     //temorary!!!
@@ -271,7 +268,15 @@ App.prototype.changeFS = function(mode) {
 //     event.stopPropagation();
 //     event.preventDefault();
 // }
+App.prototype.makeBookmark = function () {
+    let textInput = this.qs(".new-bookmark .bookmark-input"),
+        text = textInput.value.trim();
 
+    if (!text) return;
+
+    this.addBookm({title: text, href: this.qs(".rangebar").value});
+    textInput.value = "";
+}
 App.prototype.addBookm = function (item) {
     console.log(item);
     this.bookmArr.push(item);
@@ -701,9 +706,8 @@ App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
         }
 
         //bookmark indicator update
+        let icon = this.qs(".menu-bar .bookmark-tool");
         for(let item of this.bookmArr) {
-            let icon = this.qs(".menu-bar .bookmark-tool");
-            
             if(item.href == event.start.location) {
                 icon.classList.add("bookmarked");
                 break;
