@@ -702,12 +702,14 @@ App.prototype.onRenditionRelocatedUpdateIndicators = function (event) {
 
         //bookmark indicator update
         for(let item of this.bookmArr) {
+            let icon = this.qs(".menu-bar .bookmark-tool");
+            
             if(item.href == event.start.location) {
-                this.qs(".menu-bar .bookmark-tool").classList.add("bookmarked");
+                icon.classList.add("bookmarked");
                 break;
             }
 
-            this.qs(".menu-bar .bookmark-tool").classList.remove("bookmarked");
+            icon.classList.remove("bookmarked");
         }
         
     } catch (err) {
