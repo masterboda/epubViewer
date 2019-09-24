@@ -52,7 +52,7 @@ let App = function (el) {
     this.qs(".tab[data-tab=search] .search-bar .do-search").addEventListener("click", this.onSearchClick.bind(this));
     
     
-    this.qs(".do-bookmark").addEventListener("click", this.makeBookmark);
+    this.qs(".do-bookmark").addEventListener("click", this.makeBookmark.bind(this));
     this.qs(".new-bookmark .bookmark-input").addEventListener("keydown", event => {
         if(event.keyCode == 13)
             this.makeBookmark();
