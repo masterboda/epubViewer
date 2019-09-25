@@ -56,7 +56,6 @@ let App = function (el) {
     this.qs(".new-bookmark .bookmark-input").addEventListener("keydown", event => {
         if(event.keyCode == 13) {
             this.makeBookmark();
-            this.qs(".menu-bar .bookmark-tool").classList.add("bookmarked");
         }
     });
     
@@ -279,6 +278,7 @@ App.prototype.makeBookmark = function () {
 
     this.addBookm({title: text, href: this.qs(".rangebar").value});
     textInput.value = "";
+    this.qs(".menu-bar .bookmark-tool").classList.add("bookmarked");
 }
 App.prototype.addBookm = function (item) {
     console.log(item);
