@@ -35,10 +35,7 @@ let App = function (el) {
             let tooltip = this.querySelector(".menu-tooltip");
             if(tooltip) {
                 tooltip.classList.add("tooltip-active");
-                this.onmouseleave = document.body.onclick = e => {
-                    e.stopPropagation();
-                    tooltip.classList.remove("tooltip-active");
-                }
+                this.onmouseleave = () => tooltip.classList.remove("tooltip-active");
             }
             return;
         }
