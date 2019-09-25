@@ -112,15 +112,16 @@ body {
     top: 0;
     right: 0;
     display: block;
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     background: url(../images/icons/close-alone.png) center no-repeat var(--segundo);
-    background-size: 23px;
+    background-size: 20px;
     border-radius: 0 25px 0 25px;
 }
 
 .app .tabs-wrapper .book-name{
     text-align: center;
+    padding: 0 15px;
     color: var(--segundo);
 }
 
@@ -172,10 +173,12 @@ body {
     font-size: 16px;
     text-decoration: none;
     color: #3d66ef;
-    padding: 15px 0;
-    border-bottom: 1px solid #aaa;
+    margin: 15px 0;
     transition: background .3s, color .3s;
 }
+.tab .chapter-list .chapter-item.level-1 { font-weight: 500; }
+.tab .chapter-list .chapter-item.level-2 { font-weight: 400; }
+.tab .chapter-list .chapter-item.level-3 { font-weight: 300; margin: 5px 0; }
 
 .tab .chapter-list .chapter-item:hover {
     color: var(--segundo);

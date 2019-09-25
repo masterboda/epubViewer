@@ -120,12 +120,12 @@ let App = function (el) {
 
     // this.doTab("toc");
 
-    // try {
-    //     this.loadSettingsFromStorage();
-    // } catch (err) {
-    //     this.fatal("error loading settings", err);
-    //     throw err;
-    // }
+    try {
+        this.loadSettingsFromStorage();
+    } catch (err) {
+        this.fatal("error loading settings", err);
+        throw err;
+    }
     this.applyTheme();
 };
 
@@ -171,15 +171,16 @@ App.prototype.doBook = function (url, opts) {
 
     this.state.rendition.display();
 
-    if (this.state.dictInterval)
-        window.clearInterval(this.state.dictInterval);
-    this.state.dictInterval = window.setInterval(this.checkDictionary.bind(this), 50);
-    this.doDictionary(null);
+    // if (this.state.dictInterval)
+    //     window.clearInterval(this.state.dictInterval);
+    // this.state.dictInterval = window.setInterval(this.checkDictionary.bind(this), 50);
+    // this.doDictionary(null);
 };
 
-// App.prototype.loadSettingsFromStorage = function () {
-//     ["theme", "font", "font-size", "line-spacing", "margin", "progress"].forEach(container => this.restoreChipActive(container));
-// };
+App.prototype.loadSettingsFromStorage = function () {
+    ["theme", "font"].forEach(container => this.restoreChipActive(container));
+    this.changeFS(0, localStorage.getItem(`ePubViewer:font-size`));
+};
 
 /* Setting buttons
 ======================================= */
@@ -236,7 +237,7 @@ App.prototype.getChipActive = function (container) {
     return el.dataset.value;
 };
 
-App.prototype.changeFS = function(mode) {
+App.prototype.changeFS = function(mode, set) {
     let fontEl = this.qs("[data-font-size]"),
         sizes = [4,8,9,10,12,14,16,18,30],
         currFZ = +fontEl.dataset.fontSize,
@@ -253,9 +254,9 @@ App.prototype.changeFS = function(mode) {
         btns[1].classList.add('disabled');
         return;
     }
-    currFZ = sizes[sizes.indexOf(currFZ) + mode];
+    currFZ = !set ? sizes[sizes.indexOf(currFZ) + mode] : set;
     fontEl.dataset.fontSize = currFZ;
-    // localStorage.setItem(`ePubViewer:font-size`, currFZ);
+    localStorage.setItem(`ePubViewer:font-size`, currFZ);
     this.applyTheme();
 }
 
@@ -375,7 +376,7 @@ App.prototype.fatal = function (msg, err, usersFault) {
 };
 
 App.prototype.doReset = function () {
-    if (this.state.dictInterval) window.clearInterval(this.state.dictInterval);
+    // if (this.state.dictInterval) window.clearInterval(this.state.dictInterval);
     if (this.state.rendition) this.state.rendition.destroy();
     if (this.state.book) this.state.book.destroy();
     this.state = {
@@ -401,7 +402,7 @@ App.prototype.doReset = function () {
     // this.qs(".sidebar-button").classList.add("hidden");
     this.qs("button.prev").classList.add("hidden");
     this.qs("button.next").classList.add("hidden");
-    this.doDictionary(null);
+    // this.doDictionary(null);
 };
 
 App.prototype.qs = function (q) {
@@ -486,7 +487,16 @@ App.prototype.onNavigationLoaded = function (nav) {
         items.forEach(item => {
             let a = toc.appendChild(this.el("a", "chapter-item"));
             a.href = a.dataset.href = item.href;
-            a.innerHTML = `${"&nbsp;".repeat(indent*4)}${item.label.trim()}`;
+            a.innerHTML = item.label.trim();
+
+            if(indent > 0 && item.subitems.length < 1)
+                a.classList.add("level-3");
+            else if (indent == 0)
+                a.classList.add("level-1");
+            else
+                a.classList.add("level-2");
+
+            // a.innerHTML = `${'&nbsp'.repeat(indent*4)} ${item.label.trim()}`;
             a.addEventListener("click", this.onTocItemClick.bind(this, item.href));
             handleItems(item.subitems, indent + 1);
         });
@@ -495,7 +505,7 @@ App.prototype.onNavigationLoaded = function (nav) {
 };
 
 App.prototype.onRenditionRelocated = function (event) {
-    try {this.doDictionary(null);} catch (err) {}
+    // try {this.doDictionary(null);} catch (err) {}
     try {
         let navItem = this.getNavItem(event, false) || this.getNavItem(event, true);
         this.qsa(".chapter-list .chapter-item").forEach(el => el.classList[(navItem && el.dataset.href == navItem.href) ? "add" : "remove"]("active"));
@@ -553,8 +563,8 @@ App.prototype.onRenditionClick = function (event) {
     try {
         if (event.target.tagName.toLowerCase() == "a" && event.target.href) return;
         if (event.target.parentNode.tagName.toLowerCase() == "a" && event.target.parentNode.href) return;
-        // if (window.getSelection().toString().length !== 0) return;
-        // if (this.state.rendition.manager.getContents()[0].window.getSelection().toString().length !== 0) return;
+        if (window.getSelection().toString().length !== 0) return;
+        if (this.state.rendition.manager.getContents()[0].window.getSelection().toString().length !== 0) return;
     } catch (err) {}
 
     let wrapper = this.state.rendition.manager.container;
@@ -738,99 +748,99 @@ App.prototype.onRenditionStartedRestorePos = function (event) {
     }
 };
 
-App.prototype.checkDictionary = function () {
-    try {
-        let selection = (this.state.rendition.manager && this.state.rendition.manager.getContents().length > 0) ? this.state.rendition.manager.getContents()[0].window.getSelection().toString().trim() : "";
-        if (selection.length < 2 || selection.indexOf(" ") > -1) {
-            if (this.state.showDictTimeout) window.clearTimeout(this.state.showDictTimeout);
-            this.doDictionary(null);
-            return;
-        }
-        this.state.showDictTimeout = window.setTimeout(() => {
-            try {
-                let newSelection = this.state.rendition.manager.getContents()[0].window.getSelection().toString().trim();
-                if (newSelection == selection) this.doDictionary(newSelection);
-            } catch (err) {console.error(`showDictTimeout: ${err.toString()}`)}
-        }, 300);
-    } catch (err) {console.error(`checkDictionary: ${err.toString()}`)}
-};
+// App.prototype.checkDictionary = function () {
+//     try {
+//         let selection = (this.state.rendition.manager && this.state.rendition.manager.getContents().length > 0) ? this.state.rendition.manager.getContents()[0].window.getSelection().toString().trim() : "";
+//         if (selection.length < 2 || selection.indexOf(" ") > -1) {
+//             if (this.state.showDictTimeout) window.clearTimeout(this.state.showDictTimeout);
+//             this.doDictionary(null);
+//             return;
+//         }
+//         this.state.showDictTimeout = window.setTimeout(() => {
+//             try {
+//                 let newSelection = this.state.rendition.manager.getContents()[0].window.getSelection().toString().trim();
+//                 if (newSelection == selection) this.doDictionary(newSelection);
+//             } catch (err) {console.error(`showDictTimeout: ${err.toString()}`)}
+//         }, 300);
+//     } catch (err) {console.error(`checkDictionary: ${err.toString()}`)}
+// };
 
-App.prototype.doDictionary = function (word) {
-    if (this.state.lastWord) if (this.state.lastWord == word) return;
-    this.state.lastWord = word;
+// App.prototype.doDictionary = function (word) {
+//     if (this.state.lastWord) if (this.state.lastWord == word) return;
+//     this.state.lastWord = word;
 
-    if (!this.qs(".dictionary-wrapper").classList.contains("hidden")) console.log("hide dictionary");
-    this.qs(".dictionary-wrapper").classList.add("hidden");
-    this.qs(".dictionary").innerHTML = "";
-    if (!word) return;
+//     if (!this.qs(".dictionary-wrapper").classList.contains("hidden")) console.log("hide dictionary");
+//     this.qs(".dictionary-wrapper").classList.add("hidden");
+//     this.qs(".dictionary").innerHTML = "";
+//     if (!word) return;
 
-    console.log(`define ${word}`);
-    this.qs(".dictionary-wrapper").classList.remove("hidden");
-    this.qs(".dictionary").innerHTML = "";
+//     console.log(`define ${word}`);
+//     this.qs(".dictionary-wrapper").classList.remove("hidden");
+//     this.qs(".dictionary").innerHTML = "";
 
-    let definitionEl = this.qs(".dictionary").appendChild(document.createElement("div"));
-    definitionEl.classList.add("definition");
+//     let definitionEl = this.qs(".dictionary").appendChild(document.createElement("div"));
+//     definitionEl.classList.add("definition");
 
-    let wordEl = definitionEl.appendChild(document.createElement("div"));
-    wordEl.classList.add("word");
-    wordEl.innerText = word;
+//     let wordEl = definitionEl.appendChild(document.createElement("div"));
+//     wordEl.classList.add("word");
+//     wordEl.innerText = word;
 
-    let meaningsEl = definitionEl.appendChild(document.createElement("div"));
-    meaningsEl.classList.add("meanings");
-    meaningsEl.innerHTML = "Loading";
+//     let meaningsEl = definitionEl.appendChild(document.createElement("div"));
+//     meaningsEl.classList.add("meanings");
+//     meaningsEl.innerHTML = "Loading";
 
-    fetch(`https://dict.geek1011.net/word/${encodeURIComponent(word)}`).then(resp => {
-        if (resp.status >= 500) throw new Error(`Dictionary not available`);
-        return resp.json();
-    }).then(obj => {
-        if (obj.status == "error") throw new Error(`ApiError: ${obj.result}`);
-        return obj.result;
-    }).then(word => {
-        console.log("dictLookup", word);
-        meaningsEl.innerHTML = "";
-        wordEl.innerText = [word.word].concat(word.alternates || []).join(", ").toLowerCase();
+//     fetch(`https://dict.geek1011.net/word/${encodeURIComponent(word)}`).then(resp => {
+//         if (resp.status >= 500) throw new Error(`Dictionary not available`);
+//         return resp.json();
+//     }).then(obj => {
+//         if (obj.status == "error") throw new Error(`ApiError: ${obj.result}`);
+//         return obj.result;
+//     }).then(word => {
+//         console.log("dictLookup", word);
+//         meaningsEl.innerHTML = "";
+//         wordEl.innerText = [word.word].concat(word.alternates || []).join(", ").toLowerCase();
         
-        if (word.info && word.info.trim() != "") {
-            let infoEl = meaningsEl.appendChild(document.createElement("div"));
-            infoEl.classList.add("info");
-            infoEl.innerText = word.info;
-        }
+//         if (word.info && word.info.trim() != "") {
+//             let infoEl = meaningsEl.appendChild(document.createElement("div"));
+//             infoEl.classList.add("info");
+//             infoEl.innerText = word.info;
+//         }
         
-        (word.meanings || []).map((meaning, i) => {
-            let meaningEl = meaningsEl.appendChild(document.createElement("div"));
-            meaningEl.classList.add("meaning");
+//         (word.meanings || []).map((meaning, i) => {
+//             let meaningEl = meaningsEl.appendChild(document.createElement("div"));
+//             meaningEl.classList.add("meaning");
 
-            let meaningTextEl = meaningEl.appendChild(document.createElement("div"));
-            meaningTextEl.classList.add("text");
-            meaningTextEl.innerText = `${i + 1}. ${meaning.text}`;
+//             let meaningTextEl = meaningEl.appendChild(document.createElement("div"));
+//             meaningTextEl.classList.add("text");
+//             meaningTextEl.innerText = `${i + 1}. ${meaning.text}`;
 
-            if (meaning.example && meaning.example.trim() != "") {
-                let meaningExampleEl = meaningEl.appendChild(document.createElement("div"));
-                meaningExampleEl.classList.add("example");
-                meaningExampleEl.innerText = meaning.example;
-            }
-        });
+//             if (meaning.example && meaning.example.trim() != "") {
+//                 let meaningExampleEl = meaningEl.appendChild(document.createElement("div"));
+//                 meaningExampleEl.classList.add("example");
+//                 meaningExampleEl.innerText = meaning.example;
+//             }
+//         });
         
-        if (word.credit && word.credit.trim() != "") {
-            let creditEl = meaningsEl.appendChild(document.createElement("div"));
-            creditEl.classList.add("credit");
-            creditEl.innerText = word.credit;
-        }
-    }).catch(err => {
-        try {
-            console.error("dictLookup", err);
-            if (err.toString().toLowerCase().indexOf("not in dictionary") > -1) {
-                meaningsEl.innerHTML = "Word not in dictionary.";
-                return;
-            }
-            if (err.toString().toLowerCase().indexOf("not available") > -1 || err.toString().indexOf("networkerror") > -1 || err.toString().indexOf("failed to fetch") > -1) {
-                meaningsEl.innerHTML = "Dictionary not available.";
-                return;
-            }
-            meaningsEl.innerHTML = `Dictionary not available: ${err.toString()}`;
-        } catch (err) {}
-    });
-};
+//         if (word.credit && word.credit.trim() != "") {
+//             let creditEl = meaningsEl.appendChild(document.createElement("div"));
+//             creditEl.classList.add("credit");
+//             creditEl.innerText = word.credit;
+//         }
+//     }).catch(err => {
+//         try {
+//             console.error("dictLookup", err);
+//             if (err.toString().toLowerCase().indexOf("not in dictionary") > -1) {
+//                 meaningsEl.innerHTML = "Word not in dictionary.";
+//                 return;
+//             }
+//             if (err.toString().toLowerCase().indexOf("not available") > -1 || err.toString().indexOf("networkerror") > -1 || err.toString().indexOf("failed to fetch") > -1) {
+//                 meaningsEl.innerHTML = "Dictionary not available.";
+//                 return;
+//             }
+//             meaningsEl.innerHTML = `Dictionary not available: ${err.toString()}`;
+//         } catch (err) {}
+//     });
+// };
 
 App.prototype.doFullscreen = () => {
     document.fullscreenEnabled = document.fullscreenEnabled || document.mozFullScreenEnabled || document.documentElement.webkitRequestFullScreen;
