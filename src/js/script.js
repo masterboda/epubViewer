@@ -36,6 +36,10 @@ let App = function (el) {
             if(tooltip) {
                 tooltip.classList.add("tooltip-active");
                 this.onmouseleave = () => tooltip.classList.remove("tooltip-active");
+                document.body.onclick = e => {
+                    e.stopPropagation();
+                    tooltip.classList.remove("tooltip-active");
+                }
             }
             return;
         }
@@ -58,7 +62,7 @@ let App = function (el) {
             this.makeBookmark();
     });
     
-    //temorary!!!
+    //temporary!!!
     this.qsa(".modal").forEach(el => el.addEventListener("click", e => {
         if(e.target != el && !e.target.classList.contains("close-btn"))
             return;
