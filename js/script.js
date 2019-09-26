@@ -632,7 +632,7 @@ App.prototype.applyTheme = function () {
     let rules = {
         "body": {
             "background": theme.viewerBg,
-            "color": theme.fontColor,
+            "color": theme.fontColor != "" ? `${theme.fontColor} !important` : "!invalid-hack",
             "font-family": theme.fontFamily != "" ? `${theme.fontFamily} !important` : "!invalid-hack",
             "font-size": theme.fontSize != "" ? `${theme.fontSize} !important` : "!invalid-hack",
             "line-height": `${theme.lineHeight} !important`,
@@ -642,6 +642,7 @@ App.prototype.applyTheme = function () {
         "p": {
             "font-family": theme.fontFamily != "" ? `${theme.fontFamily} !important` : "!invalid-hack",
             "font-size": theme.fontSize != "" ? `${theme.fontSize} !important` : "!invalid-hack",
+            "color": theme.fontColor != "" ? `${theme.fontColor} !important` : "!invalid-hack",
         },
         "a": {
             "color": "inherit !important",
